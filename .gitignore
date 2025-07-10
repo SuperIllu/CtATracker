@@ -1,0 +1,60 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Mono Auto Generated Files
+mono_crash.*
+
+# VS Code settings (optional)
+.vscode/
+
+# Windows image thumbnails
+Thumbs.db
+ehthumbs.db
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Rider IDE files
+.idea/
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Visual Studio working folders
+.vs/
+*.VC.db
+*.VC.opendb
+
+# NUnit
+TestResult.xml
+TestResults/
+
+# Web publish directory
+publish/
+
+# Temporary files
+*.log
+*.tmp
+
+# Local NuGet packages
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# Dotnet CLI artifacts
+project.assets.json
+
+# Auto-generated files
+Generated\*
+
+# Ignore screen capture reference images (optional, your case)
+reference.png

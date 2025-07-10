@@ -1,0 +1,32 @@
+- name: BattleOrders
+  shortName: BO
+  calculation: "{level} * 10 + ({Shout} + {BattleCommand}) * 5"
+- name: BattleCommand
+  shortName: BC
+  calculation: "{level} * 10 + ({Shout} + {BattleOrders}) * 5"
+- name: Shout
+  shortName: Shout
+  calculation: "{level} * 10 + ({BattleCommands} + {BattleOrders}) * 5"
+- name: EnergyShield
+  shortName: ES
+  calculation: "{level} * 60 + 84"
+- name: HolyShield
+  shortName: HS
+  calculation: "{level} * 25 + 5"
+- name: Fade
+  shortName: Fade
+  calculation: "{level} * 12 + 108"
+- name: FrozenArmor
+  shortName: FA
+  calculation: "{level} * 12 + 132 + ({ShiverArmor} + {ChillingAmor}) *10"
+- name: ShiverArmor
+  shortName: SA
+  calculation: "{level} * 12 + 132 + ({FrozenArmor} + {ChillingAmor}) *10"
+- name: CillingArmor
+  shortName: CA
+  calculation: "{level} * 12 + 132 + ({FrozenArmor} + {ShiverArmor}) *10"
+- name: ShiverArmor
+  shortName: SA
+  calculation: "{level} * 12 + 132 + ({FrozenArmor} + {ChillingAmor}) *10"
+  
+    

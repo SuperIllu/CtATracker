@@ -1,0 +1,64 @@
+﻿<Window x:Class="CtATracker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Main Window" Height="317" Width="350"
+        WindowStartupLocation="CenterScreen">
+    <StackPanel Margin="10" VerticalAlignment="Top">
+
+        <!-- Preset selection row -->
+        <StackPanel Orientation="Horizontal" Margin="5 5 5 0">
+            <ComboBox x:Name="PresetComboBox" Width="200" Margin="0 0 5 0"/>
+            <Button x:Name="DeleteCharButton" Content="Delete" Click="DeletePreset_Click" />
+        </StackPanel>
+
+        <!-- New preset creation row -->
+        <StackPanel Orientation="Horizontal" Margin="5">
+            <TextBox x:Name="SavePresetNameBox" Width="200" Text="Character name..." Margin="0 0 5 0"/>
+            <Button Content="Add new char" Click="NewChar_Click" />
+        </StackPanel>
+
+        <Separator Margin="5"/>
+
+            <Border BorderBrush="Black" BorderThickness="0.5" Margin="1" Padding="2">
+
+                <StackPanel Orientation="Vertical" Margin="1" Name="SkillsPanel" >
+                    <!-- Config for Field 1 -->
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
+                        <TextBlock Text="Battle Command" FontWeight="Bold" Margin="5 0 5 0" Width="130"/>
+                        <TextBox x:Name="SkillLvl_1" Width="35" Text="Lvl" TextAlignment="Center" Margin="0 0 4 0"/>
+                        <Button Content="Key: --" Width="70" Click="SetKey1_Click" Margin="5 0 5 0"/>
+                        <Button Content="-" Width="25" Click="DeleteSkillEntry" ToolTip="Delete skill"/>
+                    </StackPanel>
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
+                        <TextBlock Text="Battle Command" FontWeight="Bold" Margin="5 0 5 0" Width="130"/>
+                        <TextBox x:Name="SkillLvl_2" Width="35" Text="Lvl" TextAlignment="Center" Margin="0 0 4 0"/>
+                        <Button Content="Key: --" Width="70" Click="SetKey1_Click" Margin="5 0 5 0"/>
+                        <Button Content="-" Width="25" Click="DeleteSkillEntry" ToolTip="Delete skill"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+        <Separator Margin="5"/>
+        <Label Content="Synergies (hard points)" FontWeight="Bold" Margin="5 0" FontSize="10"/>
+
+        <StackPanel x:Name="SynergyPanel">
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
+            <TextBlock Text="Battle Command" FontWeight="Bold" Margin="5 0 5 0" Width="160" FontSize="12"/>
+            <TextBox x:Name="SynergySkill_1" Width="35" Text="Lvl" TextAlignment="Center" Margin="0 0 4 0"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 2">
+            <TextBlock Text="Battle Command" FontWeight="Bold" Margin="5 0 5 0" Width="160" FontSize="12"/>
+            <TextBox x:Name="SynergySkill_2" Width="35" Text="Lvl" TextAlignment="Center" Margin="0 0 4 0"/>
+        </StackPanel>
+        </StackPanel>
+
+
+        <StackPanel x:Name="Controls" Orientation="Horizontal" Margin="0 0 0 2" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button x:Name="SaveChangesButton" Content="Save Changes" Margin="5" Click="UpdateConfig_Click" Width="100"/>
+            <Button x:Name="AddSkillButton" Content="Add skill" Margin="5" Click="AddSkill_Click" Width="100"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

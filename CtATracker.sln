@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtATracker", "CtATracker.csproj", "{A3967CD1-D95E-4A34-A83F-44AAC0B7AA25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtATracker.Tests", "..\CtATracker.Tests\CtATracker.Tests.csproj", "{AB79649D-3B68-412D-8571-21CE12F6465D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3967CD1-D95E-4A34-A83F-44AAC0B7AA25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3967CD1-D95E-4A34-A83F-44AAC0B7AA25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3967CD1-D95E-4A34-A83F-44AAC0B7AA25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3967CD1-D95E-4A34-A83F-44AAC0B7AA25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB79649D-3B68-412D-8571-21CE12F6465D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB79649D-3B68-412D-8571-21CE12F6465D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB79649D-3B68-412D-8571-21CE12F6465D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB79649D-3B68-412D-8571-21CE12F6465D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {785B5A88-090B-425A-8E5E-C10EAE3F6D05}
+	EndGlobalSection
+EndGlobal
