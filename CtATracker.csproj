@@ -20,4 +20,16 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="window_elements\CharacterHandlePanel.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Page>
+    <Page Update="window_elements\SkillListPanel.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Page>
+    <Page Update="window_elements\SynergyListPanel.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Page>
+  </ItemGroup>
+
 </Project>

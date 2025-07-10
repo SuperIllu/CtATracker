@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using CtATracker.window_elements;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -27,6 +28,9 @@ namespace CtATracker
             InitializeComponent();
             _skillHandler = new Skills();
             _characterHandler = new CharacterHandler(CharacterSelected);
+            CharacterSelection.Initialize(_characterHandler);
+            SkillList.LinkHandler(_skillHandler, _characterHandler);
+            SynergyList.LinkSkillHandler(_skillHandler);
             CheckForCharacter();
         }
 
@@ -34,30 +38,12 @@ namespace CtATracker
         {
             bool charIsAvaliable = _characterHandler.CurrentChar != null;
             AddSkillButton.IsEnabled = charIsAvaliable;
-            DeleteCharButton.IsEnabled = charIsAvaliable;
+            // TODO enable / disable sub panels based on character availability
         }
 
         private void DeletePreset_Click(object sender, RoutedEventArgs e) { }
         private void UpdateConfig_Click(object sender, RoutedEventArgs e) { }
-        private void NewChar_Click(object sender, RoutedEventArgs e)
-        {
-            string newCharName = SavePresetNameBox.Text;
-            if (string.IsNullOrWhiteSpace(newCharName))
-            {
-                MessageBox.Show("Please enter a character name.");
-                return;
-            }
 
-            _characterHandler.AddNewCharacter(newCharName);
-            _characterHandler.SetCurrentCharacter(newCharName);
-
-            PresetComboBox.Items.Clear();
-            foreach (var character in _characterHandler.GetCharacterList())
-            {
-                PresetComboBox.Items.Add(character);
-            }
-            PresetComboBox.SelectedItem = newCharName;
-        }
 
         /// <summary>
         /// Callback to update the UI when a character is selected.
@@ -69,7 +55,7 @@ namespace CtATracker
 
             if (_characterHandler.CurrentChar is null) return;
 
-            UpdateSkillList();
+            SkillList.SelectCharacter(_characterHandler.CurrentChar);
 
         }
 
@@ -78,15 +64,6 @@ namespace CtATracker
             throw new NotImplementedException();
         }
 
-        private void AddSkillToUI(SkillConfig skill)
-        {
-            if (skill.TotalPoints <= 0) return;
-            var newSkillUIEntry = new SkillEntryControl();
-            newSkillUIEntry.SkillName = skill.Name;
-            newSkillUIEntry.SkillLevel = skill.TotalPoints.ToString();
-            // TODO load key binding
-            SkillsPanel.Children.Add(newSkillUIEntry);
-        }
 
         private void SetKey1_Click(object sender, RoutedEventArgs e) { }
         private void SetKey2_Click(object sender, RoutedEventArgs e) { }
@@ -111,8 +88,9 @@ namespace CtATracker
 
             //disable other buttons while the new skill window is open
             SaveChangesButton.IsEnabled = false;
-            PresetComboBox.IsEnabled = false;
-            SavePresetNameBox.IsEnabled = false;
+            // TODO disable sub panels until skill window is closed
+            //PresetComboBox.IsEnabled = false;
+            //SavePresetNameBox.IsEnabled = false;
 
         }
 
@@ -128,41 +106,21 @@ namespace CtATracker
             Console.WriteLine($"New skill selected: {skillName} with level {skillLvl}");
             _characterHandler.CurrentChar.AddSkill(new Skills.SkillConfig() { Name = skillName, TotalPoints = skillLvl, HardPoints = 0 });
 
-            UpdateSkillList();
+            // TODO call update sskill list in sub panel
+            SkillList.SelectCharacter(_characterHandler.CurrentChar);
+            SynergyList.ShowSynergiesForChar(_characterHandler.CurrentChar);
 
             UnlockUi();
         }
 
-        private void UpdateSkillList()
-        {
-            HashSet<string> synergies = new HashSet<string>();
-            SkillsPanel.Children.Clear();
 
-            foreach (var skill in _characterHandler.CurrentChar.Skills)
-            {
-                AddSkillToUI(skill);
-                synergies.UnionWith(_skillHandler.GetSkill(skill.Name).Synergies);
-            }
-
-
-            List<SkillConfig> filteredAndSortedSkills = _characterHandler.CurrentChar.Skills
-                .Where(skill => synergies.Contains(skill.Name))
-                .OrderByDescending(skill => skill.HardPoints)
-                .ToList();
-
-            SynergyPanel.Children.Clear();
-            foreach (var synergySkill in filteredAndSortedSkills)
-            {
-                AddSynergySkillToUI(synergySkill);
-            }
-        }
 
         private void UnlockUi()
         {
             // re-enable buttons after the new skill window is closed
             SaveChangesButton.IsEnabled = true;
-            PresetComboBox.IsEnabled = true;
-            SavePresetNameBox.IsEnabled = true;
+            //PresetComboBox.IsEnabled = true;
+            //SavePresetNameBox.IsEnabled = true;
             _newSkillWindow = null;
         }
 

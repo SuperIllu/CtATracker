@@ -1,5 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace CtATracker
 {
@@ -8,10 +10,21 @@ namespace CtATracker
     /// </summary>
     public partial class SkillEntryControl : UserControl
     {
+        private static bool _isCapturingKey;
+        private static SkillEntryControl? _listeningButton;
+        private Key _lastCapturedKey;
+
+        public event Action<string, Key> OnHotKeySelected;
+        private Action<string> _removeSkillCallback;
+
         public SkillEntryControl()
         {
             InitializeComponent();
-            DeleteButton.Click += (s, e) => RaiseDeleteRequested();
+        }
+
+        public void LinkSkillRemovalCallback(Action<string> callback)
+        {
+            _removeSkillCallback = callback;
         }
 
         public string SkillName
@@ -26,13 +39,65 @@ namespace CtATracker
             set => SkillLevelBox.Text = value;
         }
 
-        public event RoutedEventHandler DeleteRequested;
 
-        private void RaiseDeleteRequested()
+        private void RemoveSkill_Click(object sender, RoutedEventArgs e)
         {
-            DeleteRequested?.Invoke(this, new RoutedEventArgs());
+            _removeSkillCallback?.Invoke(SkillName);
         }
 
-        public Button KeyButtonControl => KeyButton;
+        private void CaptureHotKey_Click(object sender, RoutedEventArgs e)
+        {
+            if (_listeningButton != null)
+            {
+                if (_listeningButton != this)
+                {
+                    _listeningButton.Focus();
+                }
+                return;
+            }
+
+            _listeningButton = this;
+            KeyButton.Content = "Press any key...";
+            KeyButton.Background = Brushes.Yellow;
+
+            // Set keyboard focus to the window to ensure key events are captured
+            this.Focusable = true;
+            this.Focus();
+
+            // Hook into the PreviewKeyDown event temporarily
+            this.PreviewKeyDown += Window_PreviewKeyDown;
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (_listeningButton == null)
+                return;
+
+            _listeningButton = null;
+            this.PreviewKeyDown -= Window_PreviewKeyDown; // Remove the handler
+
+            if (e.Key == Key.Escape)
+            {
+                // Cancel
+                KeyButton.Content = "Key: --";
+            }
+            else
+            {
+                // Save the key (store however you like)
+                string keyName = e.Key.ToString();
+                KeyButton.Content = $"K: {keyName}";
+
+                // Optionally: store this key in a variable or property
+                _lastCapturedKey = e.Key;
+                OnHotKeySelected?.Invoke(SkillName, e.Key);
+            }
+
+            // Reset button highlight
+            KeyButton.Background = Brushes.LightGray;
+
+            // Prevent further handling if needed
+            e.Handled = true;
+        }
+
     }
 }

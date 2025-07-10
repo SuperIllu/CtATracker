@@ -41,7 +41,7 @@ namespace CtATracker
         {
             string basePath = AppContext.BaseDirectory;
             string filePath = Path.Combine(basePath, SkillFileName);
-        
+
             if (!File.Exists(filePath))
             {
                 throw new FileNotFoundException($"Skill configuration file '{filePath}' not found.");
@@ -171,11 +171,12 @@ namespace CtATracker
             }
             throw new KeyNotFoundException($"Skill '{skillName}' not found.");
         }
+
+        internal bool TryGetSkill(string skillName, out Skill skill)
+        {
+            return _allSkills.TryGetValue(skillName, out skill);
+        }
     }
 
-
-
-
-
-    }
+}
 

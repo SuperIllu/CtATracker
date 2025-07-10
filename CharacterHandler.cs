@@ -12,7 +12,7 @@ using static CtATracker.Skills;
 
 namespace CtATracker
 {
-    internal class CharacterHandler
+    public class CharacterHandler
     {
         public const string CharacterFileName = "Characters.yml";
 
