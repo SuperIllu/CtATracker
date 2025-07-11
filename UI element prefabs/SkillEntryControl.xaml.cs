@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,6 +19,7 @@ namespace CtATracker
         private Action<string> _removeSkillCallback;
         private Action _onStartListening;
         private Action _onStopListening;
+        private CharacterHandler _characterHandler;
 
         public SkillEntryControl()
         {
@@ -27,6 +29,11 @@ namespace CtATracker
         public void LinkSkillRemovalCallback(Action<string> callback)
         {
             _removeSkillCallback = callback;
+        }
+
+        public void LinkHandlers(CharacterHandler characterHandler)
+        {
+            _characterHandler = characterHandler;
         }
 
         public string SkillName
@@ -117,5 +124,74 @@ namespace CtATracker
             _onStopListening?.Invoke();
         }
 
+
+        #region validating input to be only numbers
+        private static readonly Regex _intRegex = new Regex("^[0-9]+$"); // Only digits
+
+        private void NumberOnlyTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !_intRegex.IsMatch(e.Text);
+
+            System.Diagnostics.Debug.WriteLine("Debug info here");
+
+            if (!e.Handled)
+            {
+                TriggerUpdate(e, e.Text);
+            }
+        }
+
+        private void NumberOnlyTextBox_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(DataFormats.Text))
+            {
+                string text = e.DataObject.GetData(DataFormats.Text) as string;
+                if (!_intRegex.IsMatch(text))
+                {
+                    e.Handled = true;
+                    e.CancelCommand();
+                }
+                else
+                {
+                    TriggerUpdate(e, text);
+                }
+            }
+            else
+            {
+                e.Handled = true;
+                e.CancelCommand();
+            }
+
+            
+        }
+
+        private void NumberOnlyTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            // Optional: block spacebar
+            if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void TriggerUpdate(RoutedEventArgs e, string newText)
+        {
+            if (!e.Handled)
+            {
+                if (!int.TryParse(newText, out int skillLevel))
+                {
+                    System.Diagnostics.Debug.WriteLine("Invalid skill level input");
+                    return;
+                }
+                _characterHandler.CurrentChar?.SetTotalSkillPoints(SkillName, skillLevel);
+                _characterHandler.SkillLevelUpdated();
+                System.Diagnostics.Debug.WriteLine("Triggering update");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Trigger skipped");
+            }
+        }
+
+        #endregion validating input to be only numbers
     }
 }

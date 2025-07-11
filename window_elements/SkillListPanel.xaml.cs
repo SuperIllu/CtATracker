@@ -59,6 +59,7 @@ namespace CtATracker.window_elements
         {
             //if (skill.TotalPoints <= 0) return;
             var newSkillUIEntry = new SkillEntryControl();
+            newSkillUIEntry.LinkHandlers(_characterHandler);
             newSkillUIEntry.SkillName = skill.Name;
             newSkillUIEntry.SkillLevel = skill.TotalPoints.ToString();
             newSkillUIEntry.LinkSkillRemovalCallback((skillName) =>

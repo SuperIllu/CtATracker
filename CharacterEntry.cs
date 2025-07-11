@@ -55,5 +55,38 @@ namespace CtATracker
                 throw new KeyNotFoundException($"Skill '{skillName}' not found in character '{Name}'.");
             }
         }
+
+        internal void SetTotalSkillPoints(string skillName, int skillLevel)
+        {
+            var skillEntry = Skills.Find(s => s.Name == skillName);
+            if (skillEntry != null)
+            {
+                skillEntry.TotalPoints = skillLevel;
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Skill '{skillName}' not found in character '{Name}'.");
+            }
+        }
+
+        /// <summary>
+        /// Aka synergy points.
+        /// </summary>
+        /// <param name="skillName"></param>
+        /// <param name="hardPoints"></param>
+        /// <exception cref="KeyNotFoundException"></exception>
+        internal void SetHardSkillPoints(string skillName, int hardPoints)
+        {
+            var skillEntry = Skills.Find(s => s.Name == skillName);
+            if (skillEntry != null)
+            {
+                skillEntry.HardPoints = hardPoints;
+            }
+            else
+            {
+                // if the synergy skill does not exist, create it with 0 total points
+                AddSkill(new Skills.SkillConfig() { Name = skillName, HardPoints = hardPoints, TotalPoints = 0 });
+            }
+        }
     }
 }
