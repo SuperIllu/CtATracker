@@ -22,15 +22,24 @@ namespace CtATracker.window_elements
     public partial class SynergyListPanel : UserControl
     {
         private Skills _skillHandler;
+        private CharacterHandler _characterHandler;
 
         public SynergyListPanel()
         {
             InitializeComponent();
         }
 
-        public void LinkSkillHandler(Skills skillHandler)
+        private void _characterHandler_OnCharacterSelected(CharacterEntry character)
+        {
+            ShowSynergiesForChar(character);
+        }
+
+        public void LinkHandlers(Skills skillHandler, CharacterHandler characterHandler)
         {
             _skillHandler = skillHandler;
+            _characterHandler = characterHandler;
+            _characterHandler.OnSkillAddedOrRemoved += () => _characterHandler_OnCharacterSelected(_characterHandler.CurrentChar);
+            _characterHandler.OnCharacterSelected += _characterHandler_OnCharacterSelected;
         }
 
 

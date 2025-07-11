@@ -27,10 +27,12 @@ namespace CtATracker
         {
             InitializeComponent();
             _skillHandler = new Skills();
-            _characterHandler = new CharacterHandler(CharacterSelected);
+            _characterHandler = new CharacterHandler();
+
+            _characterHandler.OnCharacterSelected += CharacterSelected;
             CharacterSelection.Initialize(_characterHandler);
             SkillList.LinkHandler(_skillHandler, _characterHandler);
-            SynergyList.LinkSkillHandler(_skillHandler);
+            SynergyList.LinkHandlers(_skillHandler, _characterHandler);
             CheckForCharacter();
         }
 

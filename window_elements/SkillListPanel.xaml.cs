@@ -39,14 +39,17 @@ namespace CtATracker.window_elements
 
 
 
-        internal void SelectCharacter(CharacterEntry currentChar)
+        internal void SelectCharacter(CharacterEntry? currentChar)
         {
             SkillsPanel.Children.Clear();
+
+            if (currentChar == null) return;
 
             foreach (var skill in currentChar.Skills)
             {
                 AddSkillToUI(skill);
             }
+
 
             UpdateSkillSelection();
         }
@@ -58,6 +61,12 @@ namespace CtATracker.window_elements
             var newSkillUIEntry = new SkillEntryControl();
             newSkillUIEntry.SkillName = skill.Name;
             newSkillUIEntry.SkillLevel = skill.TotalPoints.ToString();
+            newSkillUIEntry.LinkSkillRemovalCallback((skillName) =>
+            {
+                _characterHandler.CurrentChar?.RemoveSkill(skillName);
+                SelectCharacter(_characterHandler.CurrentChar);
+                _characterHandler.SkillsUpdated();
+            });
             // TODO load key binding
             SkillsPanel.Children.Add(newSkillUIEntry);
         }
@@ -79,6 +88,7 @@ namespace CtATracker.window_elements
                 return;
             }
             currentChar.AddSkill(new SkillConfig() { Name = skillName, HardPoints = 0, TotalPoints = 0 });
+            _characterHandler.SkillsUpdated();
 
             //update ui after adding the skill
             SelectCharacter(currentChar);

@@ -16,6 +16,8 @@ namespace CtATracker
 
         public event Action<string, Key> OnHotKeySelected;
         private Action<string> _removeSkillCallback;
+        private Action _onStartListening;
+        private Action _onStopListening;
 
         public SkillEntryControl()
         {
@@ -39,6 +41,17 @@ namespace CtATracker
             set => SkillLevelBox.Text = value;
         }
 
+        /// <summary>
+        /// Want to disable some buttons while capturing the key?
+        /// </summary>
+        /// <param name="onstartListening"></param>
+        /// <param name="onStopListening"></param>
+        public void LinkListeningCallbacks(Action onstartListening, Action onStopListening)
+        {
+            _onStartListening = onstartListening;
+            _onStopListening = onStopListening;
+        }
+
 
         private void RemoveSkill_Click(object sender, RoutedEventArgs e)
         {
@@ -56,6 +69,7 @@ namespace CtATracker
                 return;
             }
 
+            _onStartListening?.Invoke();
             _listeningButton = this;
             KeyButton.Content = "Press any key...";
             KeyButton.Background = Brushes.Yellow;
@@ -66,6 +80,7 @@ namespace CtATracker
 
             // Hook into the PreviewKeyDown event temporarily
             this.PreviewKeyDown += Window_PreviewKeyDown;
+            DeleteButton.IsEnabled = false; // Disable the delete button while capturing key
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -75,6 +90,7 @@ namespace CtATracker
 
             _listeningButton = null;
             this.PreviewKeyDown -= Window_PreviewKeyDown; // Remove the handler
+            DeleteButton.IsEnabled = true; // Re-enable the delete button
 
             if (e.Key == Key.Escape)
             {
@@ -97,6 +113,8 @@ namespace CtATracker
 
             // Prevent further handling if needed
             e.Handled = true;
+
+            _onStopListening?.Invoke();
         }
 
     }

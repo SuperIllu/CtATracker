@@ -18,17 +18,13 @@ namespace CtATracker
 
 
         private Dictionary<string, CharacterEntry> _characters;
-        private Action<CharacterEntry> _onCharSelectedCallback;
+        public event Action<CharacterEntry>? OnCharacterSelected;
 
         public CharacterEntry? CurrentChar { get; private set; } = null;
+        public event Action OnSkillAddedOrRemoved;
 
-
-
-
-        public CharacterHandler(Action<CharacterEntry> onCharSelectedCallback)
+        public CharacterHandler()
         {
-            _onCharSelectedCallback = onCharSelectedCallback;
-
             string basePath = AppContext.BaseDirectory;
             string filePath = Path.Combine(basePath, SkillFileName);
 
@@ -70,7 +66,7 @@ namespace CtATracker
             if (_characters.TryGetValue(newCharName, out var character))
             {
                 CurrentChar = character;
-                _onCharSelectedCallback?.Invoke(CurrentChar);
+                OnCharacterSelected?.Invoke(CurrentChar);
             }
             else
             {
@@ -176,6 +172,13 @@ namespace CtATracker
             }
         }
 
-
+        /// <summary>
+        /// A function to signal if a skill has been added or removed.
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        internal void SkillsUpdated()
+        {
+            OnSkillAddedOrRemoved?.Invoke();
+        }
     }
 }

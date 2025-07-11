@@ -6,7 +6,7 @@
   calculation: "{level} * 10 + ({Shout} + {BattleOrders}) * 5"
 - name: Shout
   shortName: Shout
-  calculation: "{level} * 10 + ({BattleCommands} + {BattleOrders}) * 5"
+  calculation: "{level} * 10 + ({BattleCommand} + {BattleOrders}) * 5"
 - name: EnergyShield
   shortName: ES
   calculation: "{level} * 60 + 84"
