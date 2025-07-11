@@ -8,6 +8,7 @@
                  PreviewTextInput="NumberOnlyTextBox_PreviewTextInput"
                  PreviewKeyDown="NumberOnlyTextBox_PreviewKeyDown"
                  DataObject.Pasting="NumberOnlyTextBox_Pasting"
+                 TextChanged="NumberOnlyTextBox_TextChanged"
                  />
         <Button x:Name="KeyButton" Content="Key: --" Width="70" Margin="5 0 5 0" Click="CaptureHotKey_Click"/>
         <Button x:Name="DeleteButton" Content="-" Width="25" ToolTip="Delete skill" Click="RemoveSkill_Click"/>

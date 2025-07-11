@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -131,13 +132,6 @@ namespace CtATracker
         private void NumberOnlyTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !_intRegex.IsMatch(e.Text);
-
-            System.Diagnostics.Debug.WriteLine("Debug info here");
-
-            if (!e.Handled)
-            {
-                TriggerUpdate(e, e.Text);
-            }
         }
 
         private void NumberOnlyTextBox_Pasting(object sender, DataObjectPastingEventArgs e)
@@ -150,10 +144,6 @@ namespace CtATracker
                     e.Handled = true;
                     e.CancelCommand();
                 }
-                else
-                {
-                    TriggerUpdate(e, text);
-                }
             }
             else
             {
@@ -161,7 +151,7 @@ namespace CtATracker
                 e.CancelCommand();
             }
 
-            
+
         }
 
         private void NumberOnlyTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -173,24 +163,29 @@ namespace CtATracker
             }
         }
 
-        private void TriggerUpdate(RoutedEventArgs e, string newText)
+        private void NumberOnlyTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (!e.Handled)
+            var textBox = sender as TextBox;
+            string newText = textBox.Text;
+
+            if (string.IsNullOrEmpty(newText))
             {
-                if (!int.TryParse(newText, out int skillLevel))
-                {
-                    System.Diagnostics.Debug.WriteLine("Invalid skill level input");
-                    return;
-                }
+                textBox.Text = "0";
+            }
+
+            // If it's non-empty and valid, do something:
+            if (int.TryParse(newText, out int skillLevel))
+            {
                 _characterHandler.CurrentChar?.SetTotalSkillPoints(SkillName, skillLevel);
                 _characterHandler.SkillLevelUpdated();
                 System.Diagnostics.Debug.WriteLine("Triggering update");
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("Trigger skipped");
+                Debug.WriteLine("Invalid input (shouldn't happen if filtering works).");
             }
         }
+
 
         #endregion validating input to be only numbers
     }
