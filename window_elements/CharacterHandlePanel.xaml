@@ -11,7 +11,7 @@
 
         <!-- New preset creation row -->
         <StackPanel Orientation="Horizontal" Margin="5">
-            <TextBox x:Name="SavePresetNameBox" Width="200" Text="Character name..." Margin="0 0 5 0"/>
+            <TextBox x:Name="SavePresetNameBox" Width="200" Text="New Character" Margin="0 0 5 0"/>
             <Button Content="Add new char" Click="NewChar_Click" />
         </StackPanel>
     </StackPanel>

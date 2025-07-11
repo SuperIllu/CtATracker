@@ -30,16 +30,15 @@ namespace CtATracker
             _characterHandler = new CharacterHandler();
 
             _characterHandler.OnCharacterSelected += CharacterSelected;
-            CharacterSelection.Initialize(_characterHandler);
             SkillList.LinkHandler(_skillHandler, _characterHandler);
             SynergyList.LinkHandlers(_skillHandler, _characterHandler);
+            CharacterSelection.Initialize(_characterHandler);
             CheckForCharacter();
         }
 
         private void CheckForCharacter()
         {
             bool charIsAvaliable = _characterHandler.CurrentChar != null;
-            AddSkillButton.IsEnabled = charIsAvaliable;
             // TODO enable / disable sub panels based on character availability
         }
 

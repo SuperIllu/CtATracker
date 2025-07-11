@@ -179,6 +179,13 @@ namespace CtATracker
         internal void SkillsUpdated()
         {
             OnSkillAddedOrRemoved?.Invoke();
+            SaveCharactersToFile();
+        }
+
+        internal void SkillLevelUpdated()
+        {
+            // doesn't need to update the UI, but we need to save the characters
+            SaveCharactersToFile();
         }
     }
 }

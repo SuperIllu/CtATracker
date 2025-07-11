@@ -28,5 +28,9 @@
 - name: ShiverArmor
   shortName: SA
   calculation: "{level} * 12 + 132 + ({FrozenArmor} + {ChillingAmor}) *10"
+# test skill with non-exisitng synergies
+- name: Blubberlutsch
+  shortName: BL
+  calculation: "13 + {blubber} * {lutsch}"
   
     
