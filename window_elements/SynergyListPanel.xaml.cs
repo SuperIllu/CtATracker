@@ -2,6 +2,7 @@
 using CtATracker.skills;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,26 +75,39 @@ namespace CtATracker.window_elements
                 {
                     // the synergy skill is a normal skill 
                     SkillConfig? potentialSkill = currentChar.Skills.Find(s => s.Name == synergyName);
-                    if (potentialSkill is null)
+                    if (potentialSkill is not null)
                     {
-                        // char doesn't have this skill - use temporary
+                        synergiesToList.Add(potentialSkill);
+                    }
+                    else
+                    {
+                        // char doesn't have this skill - use temporary with 0 hard points
                         synergiesToList.Add(new SkillConfig
                         {
                             Name = synergyName,
                             HardPoints = 0 // or some default value, if applicable
                         });
-                        continue;
-                    }
-                    synergiesToList.Add(potentialSkill);
+                    }                    
                 }
                 else
                 {
                     // this is a pure synergy skill - create a placeholder
-                    synergiesToList.Add(new SkillConfig
+                    SkillConfig? potentialSkill = currentChar.Skills.Find(s => s.Name == synergyName);
+                    if (potentialSkill is not null)
                     {
-                        Name = synergyName,
-                        HardPoints = 0 // or some default value, if applicable
-                    });
+                        synergiesToList.Add(potentialSkill);
+                    }
+                    else
+                    {
+                        // char doesn't have this skill - use temporary with 0 hard points
+                        synergiesToList.Add(new SkillConfig
+                        {
+                            Name = synergyName,
+                            HardPoints = 0 // or some default value, if applicable
+                        });
+                        Debug.WriteLine($"Pure Synergy skill '{synergyName}' -> placeholder.");
+                    }
+                    
                 }
 
 

@@ -25,5 +25,8 @@
 - name: CillingArmor
   shortName: CA
   calculation: "{level} * 12 + 132 + ({FrozenArmor} + {ShiverArmor}) *10"
-
+- name: Blubberlutsch
+  shortName: BL
+  calculation: "13 + {blubber} *2 - {lutsch} / 4"
+  
     
