@@ -1,3 +1,4 @@
+using CtATracker.characters;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -170,7 +171,7 @@ namespace CtATracker
 
             if (string.IsNullOrEmpty(newText))
             {
-                textBox.Text = "0";
+                textBox.Text = "1";
             }
 
             // If it's non-empty and valid, do something:

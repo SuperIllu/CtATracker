@@ -1,4 +1,6 @@
-﻿using CtATracker.window_elements;
+﻿using CtATracker.characters;
+using CtATracker.characters.serialisers;
+using CtATracker.window_elements;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,6 +20,8 @@ namespace CtATracker
     /// </summary>
     public partial class MainWindow : Window
     {
+        public const string CharacterFileName = "Characters.yml";
+
         private NewSkillInput? _newSkillWindow;
         private Skills _skillHandler;
         private CharacterHandler _characterHandler;
@@ -27,7 +31,7 @@ namespace CtATracker
         {
             InitializeComponent();
             _skillHandler = new Skills();
-            _characterHandler = new CharacterHandler();
+            _characterHandler = new CharacterHandler(new CharacterFileHandler(CharacterFileName));
 
             _characterHandler.OnCharacterSelected += CharacterSelected;
             SkillList.LinkHandler(_skillHandler, _characterHandler);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CtATracker.characters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -57,7 +58,7 @@ namespace CtATracker.window_elements
 
         private void AddSkillToUI(SkillConfig skill)
         {
-            //if (skill.TotalPoints <= 0) return;
+            if (skill.TotalPoints <= 0) return;
             var newSkillUIEntry = new SkillEntryControl();
             newSkillUIEntry.LinkHandlers(_characterHandler);
             newSkillUIEntry.SkillName = skill.Name;
@@ -88,7 +89,7 @@ namespace CtATracker.window_elements
             {
                 return;
             }
-            currentChar.AddSkill(new SkillConfig() { Name = skillName, HardPoints = 0, TotalPoints = 0 });
+            currentChar.AddSkill(new SkillConfig() { Name = skillName, HardPoints = 0, TotalPoints = 1 });
             _characterHandler.SkillsUpdated();
 
             //update ui after adding the skill

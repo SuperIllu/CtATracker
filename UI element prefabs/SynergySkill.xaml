@@ -8,6 +8,7 @@
                  PreviewTextInput="NumberOnlyTextBox_PreviewTextInput"
                  PreviewKeyDown="NumberOnlyTextBox_PreviewKeyDown"
                  DataObject.Pasting="NumberOnlyTextBox_Pasting"
+                 TextChanged="NumberOnlyTextBox_TextChanged"
                  />
     </StackPanel>
 </UserControl>

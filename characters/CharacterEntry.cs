@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtATracker
+namespace CtATracker.characters
 {
     public class CharacterEntry
     {
@@ -19,13 +19,20 @@ namespace CtATracker
 
         public void AddSkill(Skills.SkillConfig skill)
         {
-            if (!Skills.Any(s => s.Name == skill.Name))
+            Skills.SkillConfig? skillConfig = Skills.Find(s => skill.Name == s.Name);
+            if (skillConfig is null)
             {
+                // is a new skill
                 Skills.Add(skill);
             }
             else
             {
-                throw new InvalidOperationException($"Skill '{skill.Name}' already exists in character '{Name}'.");
+                // skill might be already there as a pure synergy skill
+                if (skillConfig.TotalPoints > 0)
+                {
+                    throw new InvalidOperationException($"Skill '{skill.Name}' already exists in character '{Name}'.");
+                }
+                skillConfig.TotalPoints = skill.TotalPoints;
             }
         }
 

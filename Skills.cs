@@ -169,7 +169,8 @@ namespace CtATracker
             {
                 return skill;
             }
-            throw new KeyNotFoundException($"Skill '{skillName}' not found.");
+            // pure synergy skills do not have skill entries
+            return default;
         }
 
         internal bool TryGetSkill(string skillName, out Skill skill)

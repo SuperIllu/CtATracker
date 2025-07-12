@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CtATracker.characters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,9 +62,16 @@ namespace CtATracker.window_elements
         internal void ShowSynergiesForChar(CharacterEntry currentChar)
         {
             HashSet<string> synergies = new HashSet<string>();
+            Dictionary<string, SkillConfig> charSkills = currentChar.Skills.ToDictionary(s => s.Name, s => s);
+
             foreach (var skill in currentChar.Skills)
             {
-                synergies.UnionWith(_skillHandler.GetSkill(skill.Name).Synergies);
+                var newSynergies = _skillHandler.GetSkill(skill.Name).Synergies;
+                if (newSynergies is not null)
+                {
+                    // pure synergy spells do not have a skill entry
+                    synergies.UnionWith(newSynergies);
+                }
             }
 
             SynergyPanel.Children.Clear();
@@ -100,6 +108,13 @@ namespace CtATracker.window_elements
 
             }
 
+            /*
+            synergiesToList = synergies.Where(skill => charSkills.Keys.Contains(skill))
+                .Select(skill => charSkills[skill])
+                .OrderByDescending(skill => skill.HardPoints)
+                .ToList();
+            */
+
             foreach (var synergySkill in synergiesToList)
             {
                 AddSynergySkillToUI(synergySkill);
@@ -109,6 +124,7 @@ namespace CtATracker.window_elements
         private void AddSynergySkillToUI(SkillConfig synergySkill)
         {
             SynergySkill synergyEntry = new SynergySkill();
+            synergyEntry.LinkHandler(_characterHandler);
             synergyEntry.SkillName = synergySkill.Name;
             synergyEntry.SkillLevel = synergySkill.HardPoints.ToString();
             SynergyPanel.Children.Add(synergyEntry);
