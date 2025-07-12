@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -26,7 +27,8 @@ namespace CtATracker.characters.serialisers
                 {
                     name = skill.Name,
                     hardPoints = skill.HardPoints,
-                    totalPoints = skill.TotalPoints
+                    totalPoints = skill.TotalPoints,
+                    hotKey = skill.HotKey,
                 }).Where(skill => skill.hardPoints > 0 || skill.totalPoints > 0).ToList()
             }).ToList();
             return serializer.Serialize(serializableList);
@@ -78,12 +80,19 @@ namespace CtATracker.characters.serialisers
                         int hardPoints = int.Parse(hardPointsStr);
                         string totalPointsStr = skillDict["totalPoints"].ToString();
                         int totalPoints = int.Parse(totalPointsStr);
+                        string hotKeyStr = skillDict["hotKey"].ToString();
+                        if (!Enum.TryParse(hotKeyStr, out Key hotKey))
+                        {
+                            hotKey = Key.None; // Default to None if parsing fails
+                        }
+
 
                         charEntry.Skills.Add(new SkillHandler.SkillConfig
                         {
                             Name = skillName,
                             HardPoints = hardPoints,
-                            TotalPoints = totalPoints
+                            TotalPoints = totalPoints,
+                            HotKey = hotKey
                         });
                     }
                 }

@@ -64,12 +64,19 @@ namespace CtATracker.window_elements
             newSkillUIEntry.LinkHandlers(_characterHandler);
             newSkillUIEntry.SkillName = skill.Name;
             newSkillUIEntry.SkillLevel = skill.TotalPoints.ToString();
+            newSkillUIEntry.SetHotKey(skill.HotKey);
             newSkillUIEntry.LinkSkillRemovalCallback((skillName) =>
             {
                 _characterHandler.CurrentChar?.RemoveSkill(skillName, _skillHandler);
                 SelectCharacter(_characterHandler.CurrentChar);
                 _characterHandler.SkillsUpdated();
             });
+            newSkillUIEntry.OnHotKeySelected += (skillName, key) =>
+            {
+                if (_characterHandler.CurrentChar is null) return;
+                _characterHandler.CurrentChar.SetHotkey(skillName, key);
+                _characterHandler.SkillsUpdated();
+            };
             // TODO load key binding
             SkillsPanel.Children.Add(newSkillUIEntry);
         }
@@ -90,7 +97,7 @@ namespace CtATracker.window_elements
             {
                 return;
             }
-            currentChar.AddSkill(new SkillConfig() { Name = skillName, HardPoints = 0, TotalPoints = 1 });
+            currentChar.AddSkill(new SkillConfig() { Name = skillName, HardPoints = 0, TotalPoints = 1, HotKey = Key.None });
             _characterHandler.SkillsUpdated();
 
             //update ui after adding the skill

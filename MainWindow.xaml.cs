@@ -112,7 +112,7 @@ namespace CtATracker
 
             
             Console.WriteLine($"New skill selected: {skillName} with level {skillLvl}");
-            _characterHandler.CurrentChar.AddSkill(new SkillHandler.SkillConfig() { Name = skillName, TotalPoints = skillLvl, HardPoints = 0 });
+            _characterHandler.CurrentChar.AddSkill(new SkillHandler.SkillConfig() { Name = skillName, TotalPoints = skillLvl, HardPoints = 0, HotKey=Key.None });
 
             // TODO call update sskill list in sub panel
             SkillList.SelectCharacter(_characterHandler.CurrentChar);

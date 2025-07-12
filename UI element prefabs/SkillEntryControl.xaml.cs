@@ -80,7 +80,7 @@ namespace CtATracker
 
             _onStartListening?.Invoke();
             _listeningButton = this;
-            KeyButton.Content = "Press any key...";
+            KeyButton.Content = "Press hotkey";
             KeyButton.Background = Brushes.Yellow;
 
             // Set keyboard focus to the window to ensure key events are captured
@@ -185,6 +185,12 @@ namespace CtATracker
             {
                 Debug.WriteLine("Invalid input (shouldn't happen if filtering works).");
             }
+        }
+
+        internal void SetHotKey(Key hotKey)
+        {
+            KeyButton.Content = hotKey == Key.None ? "Key: --" : $"K: {hotKey}";
+            _lastCapturedKey = hotKey;
         }
 
 

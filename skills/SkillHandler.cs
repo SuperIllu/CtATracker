@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Xml;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -33,6 +34,7 @@ namespace CtATracker.skills
             public string Name;
             public int TotalPoints;
             public int HardPoints;
+            public Key HotKey;
 
             public override string ToString() => $"{Name} (Total: {TotalPoints}, Hard: {HardPoints})";
         }

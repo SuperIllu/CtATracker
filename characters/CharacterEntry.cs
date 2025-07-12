@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CtATracker.characters
 {
@@ -46,7 +47,7 @@ namespace CtATracker.characters
                 if (skillToRemove.HardPoints > 0)
                 {
                     // also acts as a synergy, keep hard points
-                    skillToRemove.TotalPoints = 0; 
+                    skillToRemove.TotalPoints = 0;
                 }
                 else
                 {
@@ -118,7 +119,7 @@ namespace CtATracker.characters
             else
             {
                 // also used a main skill, so just reset synergy points
-                synergySkill.HardPoints = 0; 
+                synergySkill.HardPoints = 0;
             }
         }
 
@@ -179,8 +180,14 @@ namespace CtATracker.characters
             else
             {
                 // if the synergy skill does not exist, create it with 0 total points
-                AddSkill(new SkillHandler.SkillConfig() { Name = skillName, HardPoints = hardPoints, TotalPoints = 0 });
+                AddSkill(new SkillHandler.SkillConfig() { Name = skillName, HardPoints = hardPoints, TotalPoints = 0, HotKey = System.Windows.Input.Key.None });
             }
+        }
+
+        internal void SetHotkey(string skillName, Key key)
+        {
+            var skillEntry = Skills.Find(s => s.Name == skillName);
+            skillEntry.HotKey = key;
         }
     }
 }
