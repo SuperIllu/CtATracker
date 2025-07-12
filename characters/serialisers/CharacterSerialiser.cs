@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CtATracker.skills;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,6 +42,9 @@ namespace CtATracker.characters.serialisers
                .WithNamingConvention(CamelCaseNamingConvention.Instance)
                .Build();
             var rawCharList = deserializer.Deserialize<List<Dictionary<string, object>>>(fileContent);
+            // skip if file is empty
+            if (rawCharList is null) return new();
+
             foreach (var rawCharEntry in rawCharList)
             {
                 try
@@ -52,6 +56,7 @@ namespace CtATracker.characters.serialisers
                     Console.WriteLine($"Error deserializing character '{rawCharEntry}': {ex.Message}");
                     continue;
                 }
+
             }
             return characters;
         }
@@ -59,7 +64,7 @@ namespace CtATracker.characters.serialisers
         public static void DeserializeCharacterEntry(Dictionary<string, CharacterEntry> characters, Dictionary<string, object> rawCharEntry)
         {
             string charName = (string)rawCharEntry["name"];
-            CharacterEntry charEntry = new() { Name = charName, Skills = new List<Skills.SkillConfig>() };
+            CharacterEntry charEntry = new() { Name = charName, Skills = new List<SkillHandler.SkillConfig>() };
             characters[charName] = charEntry;
             object rawSkills = rawCharEntry["skills"];
             if (rawSkills is IEnumerable<object> skills)
@@ -74,7 +79,7 @@ namespace CtATracker.characters.serialisers
                         string totalPointsStr = skillDict["totalPoints"].ToString();
                         int totalPoints = int.Parse(totalPointsStr);
 
-                        charEntry.Skills.Add(new Skills.SkillConfig
+                        charEntry.Skills.Add(new SkillHandler.SkillConfig
                         {
                             Name = skillName,
                             HardPoints = hardPoints,

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using static CtATracker.Skills;
+using static CtATracker.skills.SkillHandler;
 
 namespace CtATracker.characters
 {

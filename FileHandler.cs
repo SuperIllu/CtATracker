@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CtATracker.skills;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,31 +12,31 @@ namespace CtATracker
     {
         const string filePath = "data.txt";
 
-        public static List<Skills.SkillConfig> LoadData()
+        public static List<SkillHandler.SkillConfig> LoadData()
         {
             try
             {
                 File.ReadAllText(filePath);
                 YamlDotNet.Serialization.Deserializer deserializer = new YamlDotNet.Serialization.Deserializer();
                 string yamlContent = File.ReadAllText(filePath);
-                List<Skills.SkillConfig> data = deserializer.Deserialize<List<Skills.SkillConfig>>(yamlContent);
+                List<SkillHandler.SkillConfig> data = deserializer.Deserialize<List<SkillHandler.SkillConfig>>(yamlContent);
                 return data;
             }
             catch (FileNotFoundException)
             {
                 // If the file does not exist, return an empty list
-                return new List<Skills.SkillConfig>();
+                return new List<SkillHandler.SkillConfig>();
             }
             catch (Exception ex)
             {
                 // Handle other exceptions (e.g., deserialization errors)
                 Console.WriteLine($"Error loading data: {ex.Message}");
-                return new List<Skills.SkillConfig>();
+                return new List<SkillHandler.SkillConfig>();
             }
         }
 
 
-        public static void SaveData(List<Skills.SkillConfig> data)
+        public static void SaveData(List<SkillHandler.SkillConfig> data)
         {
             YamlDotNet.Serialization.Serializer serializer = new YamlDotNet.Serialization.Serializer();
             string yamlRepr = serializer.Serialize(data);

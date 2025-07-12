@@ -1,5 +1,7 @@
 ﻿using CtATracker.characters;
 using CtATracker.characters.serialisers;
+using CtATracker.skills;
+using CtATracker.skills.serialisers;
 using CtATracker.window_elements;
 using System.Text;
 using System.Windows;
@@ -11,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static CtATracker.Skills;
+using static CtATracker.skills.SkillHandler;
 
 namespace CtATracker
 {
@@ -21,16 +23,17 @@ namespace CtATracker
     public partial class MainWindow : Window
     {
         public const string CharacterFileName = "Characters.yml";
+        public const string SkillFileName = "skills.yml";
 
         private NewSkillInput? _newSkillWindow;
-        private Skills _skillHandler;
+        private SkillHandler _skillHandler;
         private CharacterHandler _characterHandler;
 
 
         public MainWindow()
         {
             InitializeComponent();
-            _skillHandler = new Skills();
+            _skillHandler = new SkillHandler(new SkillFileHandler(SkillFileName));
             _characterHandler = new CharacterHandler(new CharacterFileHandler(CharacterFileName));
 
             _characterHandler.OnCharacterSelected += CharacterSelected;
@@ -109,7 +112,7 @@ namespace CtATracker
 
             
             Console.WriteLine($"New skill selected: {skillName} with level {skillLvl}");
-            _characterHandler.CurrentChar.AddSkill(new Skills.SkillConfig() { Name = skillName, TotalPoints = skillLvl, HardPoints = 0 });
+            _characterHandler.CurrentChar.AddSkill(new SkillHandler.SkillConfig() { Name = skillName, TotalPoints = skillLvl, HardPoints = 0 });
 
             // TODO call update sskill list in sub panel
             SkillList.SelectCharacter(_characterHandler.CurrentChar);

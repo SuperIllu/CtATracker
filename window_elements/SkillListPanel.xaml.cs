@@ -1,4 +1,5 @@
 ﻿using CtATracker.characters;
+using CtATracker.skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static CtATracker.Skills;
+using static CtATracker.skills.SkillHandler;
 
 namespace CtATracker.window_elements
 {
@@ -23,7 +24,7 @@ namespace CtATracker.window_elements
     /// </summary>
     public partial class SkillListPanel : UserControl
     {
-        private Skills _skillHandler;
+        private SkillHandler _skillHandler;
         private CharacterHandler _characterHandler;
 
         public SkillListPanel()
@@ -31,7 +32,7 @@ namespace CtATracker.window_elements
             InitializeComponent();
         }
 
-        internal void LinkHandler(Skills skillHandler, CharacterHandler charHandler)
+        internal void LinkHandler(SkillHandler skillHandler, CharacterHandler charHandler)
         {
             _skillHandler = skillHandler;
             _characterHandler = charHandler;
@@ -65,7 +66,7 @@ namespace CtATracker.window_elements
             newSkillUIEntry.SkillLevel = skill.TotalPoints.ToString();
             newSkillUIEntry.LinkSkillRemovalCallback((skillName) =>
             {
-                _characterHandler.CurrentChar?.RemoveSkill(skillName);
+                _characterHandler.CurrentChar?.RemoveSkill(skillName, _skillHandler);
                 SelectCharacter(_characterHandler.CurrentChar);
                 _characterHandler.SkillsUpdated();
             });
@@ -101,7 +102,10 @@ namespace CtATracker.window_elements
         private void UpdateSkillSelection()
         {
             List<string> availableSkills = _skillHandler.GetAllSkills();
-            List<string> alreadyKnownSkills = _characterHandler.CurrentChar.Skills.Select(skill => skill.Name).ToList();
+            // only show real skills, not synergies, hence total points must be > 0
+            List<string> alreadyKnownSkills = _characterHandler.CurrentChar.Skills
+                .Where(skill => skill.TotalPoints > 0)
+                .Select(skill => skill.Name).ToList();
 
             // Filter out already known skills from available skills
             availableSkills = availableSkills.Where(skill => !alreadyKnownSkills.Contains(skill)).ToList();

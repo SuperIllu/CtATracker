@@ -1,4 +1,5 @@
 ﻿using CtATracker.characters;
+using CtATracker.skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static CtATracker.Skills;
+using static CtATracker.skills.SkillHandler;
 
 namespace CtATracker.window_elements
 {
@@ -22,7 +23,7 @@ namespace CtATracker.window_elements
     /// </summary>
     public partial class SynergyListPanel : UserControl
     {
-        private Skills _skillHandler;
+        private SkillHandler _skillHandler;
         private CharacterHandler _characterHandler;
 
         public SynergyListPanel()
@@ -35,7 +36,7 @@ namespace CtATracker.window_elements
             ShowSynergiesForChar(character);
         }
 
-        public void LinkHandlers(Skills skillHandler, CharacterHandler characterHandler)
+        public void LinkHandlers(SkillHandler skillHandler, CharacterHandler characterHandler)
         {
             _skillHandler = skillHandler;
             _characterHandler = characterHandler;
@@ -44,6 +45,7 @@ namespace CtATracker.window_elements
         }
 
 
+        /*
 
         public void UpdateSynergyList(CharacterEntry characterEntry, IEnumerable<string> synergies)
         {
@@ -58,22 +60,11 @@ namespace CtATracker.window_elements
                 AddSynergySkillToUI(synergySkill);
             }
         }
+        */
 
         internal void ShowSynergiesForChar(CharacterEntry currentChar)
         {
-            HashSet<string> synergies = new HashSet<string>();
-            Dictionary<string, SkillConfig> charSkills = currentChar.Skills.ToDictionary(s => s.Name, s => s);
-
-            foreach (var skill in currentChar.Skills)
-            {
-                var newSynergies = _skillHandler.GetSkill(skill.Name).Synergies;
-                if (newSynergies is not null)
-                {
-                    // pure synergy spells do not have a skill entry
-                    synergies.UnionWith(newSynergies);
-                }
-            }
-
+            HashSet<string> synergies = currentChar.GetSynergies(_skillHandler);
             SynergyPanel.Children.Clear();
 
             List<SkillConfig> synergiesToList = new();
