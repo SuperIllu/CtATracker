@@ -29,7 +29,7 @@ CtATracker
 
 6) Start the overlay & use your skills
 
-- found a skill shrine? click the skill shrine button to add the +2 bonus (see limitations)![Overlay screenshot](readme/overlay_skillshrine.PNG)
+- found a skill shrine? click the skill shrine button to add the +2 bonus (see limitations) ![Overlay screenshot](readme/overlay_skillshrine.png)
 
 - you can also add hotkeys for skills you don't cast yourself, e.g. a fade proc from treachery
 
