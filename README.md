@@ -5,6 +5,7 @@ CtATracker
 ## 🧩 Features
 
 - Always-on-top overlay that shows remaining duration of buffs
+
   ![Hotkey Configuration](readme/overlay.png)
 - Customizable skill hotkey bindings
 - Timer starts based on hotkey activation — no game hooking
@@ -16,11 +17,13 @@ CtATracker
 ## 🎮 Setup
 1) Start the program (.exe in `build`folder or build yourself)
 2) Create a character and add skills from the drop down menu
+
 ![Hotkey Configuration](readme/main_window.png)
 3) set skill points: this is the total skill points, including all bonuses (not Battle commands buff itself!), i.e. the number the preview tells you.
 4) [Optional] set synergy points if applicable
 5) Click the hotkey listener button and press the corresponding hotkey. 
 	- right now only keyboard buttons supported (no mouse)
+	
 ![Hotkey Configuration](readme/hotkey_listening.png)
 6) Start the overlay & use your skills
 
