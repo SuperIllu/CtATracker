@@ -10,7 +10,7 @@ CtATracker
 - Customizable skill hotkey bindings
 - Timer starts based on hotkey activation — no game hooking
 - Simple, non-intrusive interface
-- Will take buff from Battle command into account
+- Will take buff from Battle command into account *if registered and active*!
 - Store multiple characters
 - Easy to extend with more spells
 
