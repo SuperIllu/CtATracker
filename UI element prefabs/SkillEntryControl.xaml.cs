@@ -69,6 +69,7 @@ namespace CtATracker.UI_element_prefabs
 
         private void CaptureHotKey_Click(object sender, RoutedEventArgs e)
         {
+            // re-focus on listening button if another one is pressed
             if (_listeningButton != null)
             {
                 if (_listeningButton != this)
@@ -101,7 +102,14 @@ namespace CtATracker.UI_element_prefabs
             this.PreviewKeyDown -= Window_PreviewKeyDown; // Remove the handler
             DeleteButton.IsEnabled = true; // Re-enable the delete button
 
-            if (e.Key == Key.Escape)
+            Key capturedKey = e.Key;
+            // handle OS level interceptions, e.g. F10
+            if (e.Key == Key.System)
+            {
+                capturedKey = e.SystemKey;
+            }
+
+            if (capturedKey == Key.Escape)
             {
                 // Cancel
                 KeyButton.Content = "Key: --";
@@ -109,12 +117,14 @@ namespace CtATracker.UI_element_prefabs
             else
             {
                 // Save the key (store however you like)
-                string keyName = e.Key.ToString();
+                string keyName = capturedKey.ToString();
                 KeyButton.Content = $"K: {keyName}";
 
                 // Optionally: store this key in a variable or property
-                _lastCapturedKey = e.Key;
+                _lastCapturedKey = capturedKey;
                 OnHotKeySelected?.Invoke(SkillName, e.Key);
+
+                Debug.WriteLine($"Key captured: {capturedKey}");
             }
 
             // Reset button highlight
