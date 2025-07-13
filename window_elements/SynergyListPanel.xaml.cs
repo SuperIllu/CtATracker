@@ -1,5 +1,7 @@
 ﻿using CtATracker.characters;
+using CtATracker.secondary_windows;
 using CtATracker.skills;
+using CtATracker.UI_element_prefabs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

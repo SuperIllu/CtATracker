@@ -1,4 +1,4 @@
-<UserControl x:Class="CtATracker.SynergySkill"
+<UserControl x:Class="CtATracker.UI_element_prefabs.SynergySkill"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Height="20" MinWidth="300">

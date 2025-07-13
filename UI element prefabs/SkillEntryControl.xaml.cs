@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace CtATracker
+namespace CtATracker.UI_element_prefabs
 {
     /// <summary>
     /// Prefab for a skill entry in the main window.

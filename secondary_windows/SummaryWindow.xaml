@@ -1,0 +1,54 @@
+﻿<Window x:Class="CtATracker.secondary_windows.SummaryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        Width="200" 
+        SizeToContent="Height"
+        >
+
+    <Border Background="#DDFFFFFF" CornerRadius="2" Padding="2" BorderBrush="Gray" BorderThickness="1">
+
+        <StackPanel VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch" Background="DarkGray">
+                <Ellipse x:Name="StateDot" Width="10" Height="10" Margin="6,0,6,0" Fill="Red" HorizontalAlignment="Left"/>
+                <TextBlock x:Name="StateText" FontWeight="Bold" Foreground="White" FontSize="13" Text="Waiting for lvls" HorizontalAlignment="Center"/>
+                <Button x:Name="SkillShrineButton" Width="20" Height="20" Margin="50 0 0 0"
+                        HorizontalAlignment="Right" VerticalAlignment="Center" Click="SkillShrine_Click"
+                        BorderBrush="LimeGreen"
+                        BorderThickness="1">
+
+                    <Button.Background>
+                        <ImageBrush x:Name="SkillShrineImg" ImageSource="/img/SkillShrine.png"/>
+                    </Button.Background>
+
+                </Button>
+            </StackPanel>
+
+            <StackPanel x:Name="TimerEntriesPanel" Margin="0.5" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                <!-- Timer entries will be added here dynamically --> 
+                <!-- First Field -->
+                <Grid Height="16" Margin="0 1 0 1">
+                    <ProgressBar x:Name="Bar_BattleCommand" Minimum="0" Maximum="100" Value="50"
+                             Background="Transparent" Foreground="LightGreen"
+                             IsIndeterminate="False" Margin="0"/>
+                    <TextBlock x:Name="Text_BattleCommand" Text="Battle command - 00:00" 
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontWeight="Bold" Foreground="Black" FontSize="13"/>
+                </Grid>
+
+                <!-- Second Field -->
+                <Grid Height="16">
+                    <ProgressBar x:Name="Bar_BattleOrders" Minimum="0" Maximum="100" Value="75"
+                             Background="Transparent" Foreground="LightBlue"
+                             IsIndeterminate="False" Margin="1"/>
+                    <TextBlock x:Name="Text_BattleOrders" Text="Battle orders - 00:00" 
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontWeight="Bold" Foreground="Black" FontSize="13"/>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

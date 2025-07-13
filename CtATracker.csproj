@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="img\SkillShrine.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MouseKeyHook" Version="5.7.1" />
     <PackageReference Include="ncalc" Version="1.3.8" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
@@ -30,6 +34,12 @@
     <Page Update="window_elements\SynergyListPanel.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="img\SkillShrine.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

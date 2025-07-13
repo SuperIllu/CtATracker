@@ -66,7 +66,7 @@ namespace CtATracker.characters.serialisers
         public static void DeserializeCharacterEntry(Dictionary<string, CharacterEntry> characters, Dictionary<string, object> rawCharEntry)
         {
             string charName = (string)rawCharEntry["name"];
-            CharacterEntry charEntry = new() { Name = charName, Skills = new List<SkillHandler.SkillConfig>() };
+            CharacterEntry charEntry = new(charName);
             characters[charName] = charEntry;
             object rawSkills = rawCharEntry["skills"];
             if (rawSkills is IEnumerable<object> skills)

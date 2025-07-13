@@ -3,20 +3,36 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+[assembly : InternalsVisibleTo("CtATracker.Tests.CharacterTests")]
 namespace CtATracker.characters
 {
     public class CharacterEntry
     {
         public string Name;
-        public List<SkillHandler.SkillConfig> Skills;
+        public List<SkillHandler.SkillConfig> Skills { get; internal set; }
+        public Dictionary<string, SkillHandler.SkillConfig> MappedSkills
+        {
+            get
+            {
+                return Skills.ToDictionary(skill => skill.Name, skill => skill);
+            }
+        }
 
         public CharacterEntry()
         {
             Name = "NewCharacter";
+            Skills = new List<SkillHandler.SkillConfig>();
+        }
+
+        public CharacterEntry(string name)
+        {
+            Name = name;
             Skills = new List<SkillHandler.SkillConfig>();
         }
 

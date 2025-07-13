@@ -45,11 +45,7 @@ namespace CtATracker.characters
                 return;
             }
 
-            CharacterEntry newChar = new CharacterEntry
-            {
-                Name = charName,
-                Skills = new List<SkillConfig>()
-            };
+            CharacterEntry newChar = new CharacterEntry(charName);
             _characters.Add(charName, newChar);
         }
 

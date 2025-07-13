@@ -18,7 +18,7 @@
 
 
         <StackPanel x:Name="Controls" Orientation="Horizontal" Margin="0 0 0 2" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button x:Name="SaveChangesButton" Content="Start" Margin="5" Click="UpdateConfig_Click" Width="100"/>
+            <Button x:Name="StartOverlayButton" Content="Start overlay" Margin="5" Click="StartOverlay_Click" Width="100"/>
         </StackPanel>
     </StackPanel>
 </Window>
