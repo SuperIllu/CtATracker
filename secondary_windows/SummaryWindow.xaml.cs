@@ -17,6 +17,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Diagnostics;
 
 
 namespace CtATracker.secondary_windows
@@ -143,6 +144,8 @@ namespace CtATracker.secondary_windows
         {
             Key wpfKey = KeyInterop.KeyFromVirtualKey((int)e.KeyCode);
 
+            Debug.WriteLine($"hotkey {e}->{wpfKey} pressed");
+
             /*
              * TODO implement toggle listening?
             if (wpfKey == ToggleListening)
@@ -152,7 +155,7 @@ namespace CtATracker.secondary_windows
             }
             */
 
-            
+
             if (!_isListening)
             {
                 return; // Ignore key presses if not listening

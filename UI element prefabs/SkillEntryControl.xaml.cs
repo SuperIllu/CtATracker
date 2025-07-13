@@ -122,7 +122,7 @@ namespace CtATracker.UI_element_prefabs
 
                 // Optionally: store this key in a variable or property
                 _lastCapturedKey = capturedKey;
-                OnHotKeySelected?.Invoke(SkillName, e.Key);
+                OnHotKeySelected?.Invoke(SkillName, capturedKey);
 
                 Debug.WriteLine($"Key captured: {capturedKey}");
             }
