@@ -26,6 +26,8 @@ namespace CtATracker.secondary_windows
     /// </summary>
     public partial class SummaryWindow : Window
     {
+        public const float SkillShrineDuration = 10f;
+
         private class Times
         {
             public float CurrentTime;
@@ -55,6 +57,7 @@ namespace CtATracker.secondary_windows
         private ColourPalette colourPalette = new ColourPalette();
         private Dictionary<SkillHandler.SkillConfig, Times> _skillTimes;
         private Dictionary<SkillHandler.SkillConfig, TimerWindowEntry> _skillUIElements;
+        private bool _skillShrineActive;
 
         // gives you a bonus point
         private const string BattleCommandsSkillName = "BattleCommand";
@@ -179,25 +182,26 @@ namespace CtATracker.secondary_windows
             {
                 if (_skillTimes.TryGetValue(battleCommandsSkill, out Times battleCommandsTime) && battleCommandsTime.CurrentTime > 0)
                 {
-                    // battle commands give bonus points
                     bonusPoints += 1;
                 }
             }
-
-            //TODO check for skill shrine
+            if (_skillShrineActive)
+            {
+                bonusPoints += 2;
+            }
 
             return bonusPoints;
         }
 
         public void SkillShrine_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Skill shrine clicked! Implement logic here.");
+            ActivateSkillShrineTimer();
         }
 
         private void SetListenging(bool isListening)
         {
             StateDot.Fill = isListening ? Brushes.LimeGreen : Brushes.OrangeRed;
-            StateText.Text = isListening ? "Listening" : "Not listening";
+            StateText.Text = isListening ? "Active" : "Paused";
         }
 
 
@@ -210,6 +214,15 @@ namespace CtATracker.secondary_windows
                 _timer.Tick += Timer_Tick;
                 _timer.Start();
             }
+        }
+
+        private async void ActivateSkillShrineTimer()
+        {
+            _skillShrineActive = true;
+            SkillShrineButton.BorderBrush = Brushes.LimeGreen;
+            await Task.Delay(TimeSpan.FromSeconds(SkillShrineDuration)); 
+            _skillShrineActive = false;
+            SkillShrineButton.BorderBrush = Brushes.Transparent; // Reset border
         }
 
         private void Timer_Tick(object? sender, EventArgs e)

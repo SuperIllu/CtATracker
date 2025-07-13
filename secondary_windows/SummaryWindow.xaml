@@ -14,11 +14,11 @@
         <StackPanel VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch" Background="DarkGray">
                 <Ellipse x:Name="StateDot" Width="10" Height="10" Margin="6,0,6,0" Fill="Red" HorizontalAlignment="Left"/>
-                <TextBlock x:Name="StateText" FontWeight="Bold" Foreground="White" FontSize="13" Text="Waiting for lvls" HorizontalAlignment="Center"/>
-                <Button x:Name="SkillShrineButton" Width="20" Height="20" Margin="50 0 0 0"
+                <TextBlock x:Name="StateText" FontWeight="Bold" Foreground="White" FontSize="13" Text="Sleeping..." HorizontalAlignment="Center"/>
+                <Button x:Name="SkillShrineButton" Width="26" Height="20" Margin="40 0 0 0"
                         HorizontalAlignment="Right" VerticalAlignment="Center" Click="SkillShrine_Click"
-                        BorderBrush="LimeGreen"
-                        BorderThickness="1">
+                        BorderBrush="Transparent"
+                        BorderThickness="5 1 5 1 ">
 
                     <Button.Background>
                         <ImageBrush x:Name="SkillShrineImg" ImageSource="/img/SkillShrine.png"/>
