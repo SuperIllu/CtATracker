@@ -19,12 +19,14 @@ CtATracker
 2) Create a character and add skills from the drop down menu
 
 ![Hotkey Configuration](readme/main_window.png)
+
 3) set skill points: this is the total skill points, including all bonuses (not Battle commands buff itself!), i.e. the number the preview tells you.
 4) [Optional] set synergy points if applicable
 5) Click the hotkey listener button and press the corresponding hotkey. 
 	- right now only keyboard buttons supported (no mouse)
 	
 ![Hotkey Configuration](readme/hotkey_listening.png)
+
 6) Start the overlay & use your skills
 
 - found a skill shrine? click the skill shrine button to add the +2 bonus (see limitations)
