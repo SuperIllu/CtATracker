@@ -1,12 +1,12 @@
 - name: BattleOrders
   shortName: BO
-  calculation: "{level} * 10 + ({Shout} + {BattleCommand}) * 5"
+  calculation: "20 + {level} * 10 + ({Shout} + {BattleCommand}) * 5"
 - name: BattleCommand
   shortName: BC
-  calculation: "{level} * 10 + ({Shout} + {BattleOrders}) * 5"
+  calculation: "20 + {level} * 10 + ({Shout} + {BattleOrders}) * 5"
 - name: Shout
   shortName: Shout
-  calculation: "{level} * 10 + ({BattleCommand} + {BattleOrders}) * 5"
+  calculation: "20 + {level} * 10 + ({BattleCommand} + {BattleOrders}) * 5"
 - name: EnergyShield
   shortName: ES
   calculation: "{level} * 60 + 84"
