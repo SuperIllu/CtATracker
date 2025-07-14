@@ -38,6 +38,7 @@ CtATracker
 - It assumes you actually cast the spell
   - if you press the buttons faster than your FCR allows it will not notice
   - if you get iterrupted while casting, it will not notice
+- It does not recognise when a game ends, but the timers will auto-update when you re-cast them in a new game (battle command buff might still apply, careful)
 - You cannot rename a character, just delete and create a new one
 - Once you listen to a hotkey input, either input it of press Escapce, if you add a new skill while listening you break the UI --> restart
 - Skill shrine: the skill shrine duration depends on too many factors (curses, fade) to be estimated properly. In this tool, it will be active for **10s** before resetting.
