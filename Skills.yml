@@ -9,7 +9,7 @@
   calculation: "20 + {level} * 10 + ({BattleCommand} + {BattleOrders}) * 5"
 - name: EnergyShield
   shortName: ES
-  calculation: "{level} * 60 + 84"
+  calculation: "{level} * 24 + 120"
 - name: HolyShield
   shortName: HS
   calculation: "{level} * 25 + 5"
