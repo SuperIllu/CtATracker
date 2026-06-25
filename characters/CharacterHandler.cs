@@ -47,6 +47,8 @@ namespace CtATracker.characters
 
             CharacterEntry newChar = new CharacterEntry(charName);
             _characters.Add(charName, newChar);
+            if (_autoSave)
+                SaveCharactersToFile();
         }
 
         internal void SetCurrentCharacter(string newCharName)
