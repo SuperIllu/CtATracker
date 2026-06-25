@@ -58,6 +58,7 @@ namespace CtATracker.characters
             if (_characters.TryGetValue(newCharName, out var character))
             {
                 CurrentChar = character;
+                CurrentControlScheme = character.ControlScheme;
                 OnCharacterSelected?.Invoke(CurrentChar);
             }
             else

@@ -45,6 +45,7 @@ namespace CtATracker
             SynergyList.LinkHandlers(_skillHandler, _characterHandler);
             CharacterSelection.Initialize(_characterHandler);
             CheckForCharacter();
+            SyncRadioButtons();
 
         }
 
@@ -109,7 +110,20 @@ namespace CtATracker
             _characterHandler.CurrentControlScheme = KeyboardModeRadio.IsChecked == true
                 ? ControlScheme.Keyboard
                 : ControlScheme.Controller;
+            if (_characterHandler.CurrentChar != null)
+            {
+                _characterHandler.CurrentChar.ControlScheme = _characterHandler.CurrentControlScheme;
+                _characterHandler.SkillLevelUpdated();
+            }
             SkillList.UpdateControlScheme(_characterHandler.CurrentControlScheme);
+        }
+
+        private void SyncRadioButtons()
+        {
+            if (_characterHandler?.CurrentChar == null) return;
+            bool isKeyboard = _characterHandler.CurrentChar.ControlScheme == ControlScheme.Keyboard;
+            KeyboardModeRadio.IsChecked = isKeyboard;
+            ControllerModeRadio.IsChecked = !isKeyboard;
         }
 
         /// <summary>
@@ -123,6 +137,7 @@ namespace CtATracker
             if (_characterHandler.CurrentChar is null) return;
 
             SkillList.SelectCharacter(_characterHandler.CurrentChar);
+            SyncRadioButtons();
         }
     }
 }

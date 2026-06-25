@@ -1,4 +1,5 @@
 ﻿using CtATracker.skills;
+using CtATracker.window_elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace CtATracker.characters
     public class CharacterEntry
     {
         public string Name;
+        public ControlScheme ControlScheme { get; set; } = ControlScheme.Keyboard;
         public List<SkillHandler.SkillConfig> Skills { get; internal set; }
         public Dictionary<string, SkillHandler.SkillConfig> MappedSkills
         {

@@ -1,4 +1,5 @@
 ﻿using CtATracker.skills;
+using CtATracker.window_elements;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,7 @@ namespace CtATracker.characters.serialisers
             var serializableList = characters.Select(kvp => new
             {
                 name = kvp.Key,
+                controlScheme = kvp.Value.ControlScheme,
                 skills = kvp.Value.Skills.Select(skill => new
                 {
                     name = skill.Name,
@@ -68,6 +70,15 @@ namespace CtATracker.characters.serialisers
         {
             string charName = (string)rawCharEntry["name"];
             CharacterEntry charEntry = new(charName);
+            if (rawCharEntry.ContainsKey("controlScheme"))
+            {
+                string csStr = rawCharEntry["controlScheme"].ToString();
+                if (!Enum.TryParse<ControlScheme>(csStr, out var scheme))
+                {
+                    scheme = ControlScheme.Keyboard;
+                }
+                charEntry.ControlScheme = scheme;
+            }
             characters[charName] = charEntry;
             object rawSkills = rawCharEntry["skills"];
             if (rawSkills is IEnumerable<object> skills)
