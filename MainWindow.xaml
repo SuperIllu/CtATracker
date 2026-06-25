@@ -18,8 +18,8 @@
 
 
         <StackPanel x:Name="Controls" Orientation="Horizontal" Margin="0 0 0 2" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <RadioButton x:Name="KeyboardModeRadio" Content="Keyboard" IsChecked="True" Margin="5 0" GroupName="InputMode" Checked="InputMode_Changed"/>
-            <RadioButton x:Name="ControllerModeRadio" Content="Controller" Margin="5 0" GroupName="InputMode" Checked="InputMode_Changed"/>
+            <RadioButton x:Name="KeyboardModeRadio" VerticalAlignment="Center" Content="Keyboard" IsChecked="True" Margin="5 0" GroupName="InputMode" Checked="InputMode_Changed"/>
+            <RadioButton x:Name="ControllerModeRadio" VerticalAlignment="Center" Content="Controller" Margin="5 0" GroupName="InputMode" Checked="InputMode_Changed"/>
             <Button x:Name="StartOverlayButton" Content="Start overlay" Margin="5" Click="StartOverlay_Click" Width="100"/>
         </StackPanel>
     </StackPanel>

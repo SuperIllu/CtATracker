@@ -25,6 +25,8 @@ namespace CtATracker
 
         public MainWindow()
         {
+            InitializeComponent();
+
             _characterHandler = new CharacterHandler(new CharacterFileHandler(CharacterFileName));
             try
             {
@@ -37,7 +39,6 @@ namespace CtATracker
                 return;
             }
 
-            InitializeComponent();
 
             _characterHandler.OnCharacterSelected += CharacterSelected;
             SkillList.LinkHandler(_skillHandler, _characterHandler);
@@ -103,6 +104,8 @@ namespace CtATracker
 
         private void InputMode_Changed(object sender, RoutedEventArgs e)
         {
+            if (_characterHandler is null) return; // not yet initialised
+
             _characterHandler.CurrentControlScheme = KeyboardModeRadio.IsChecked == true
                 ? ControlScheme.Keyboard
                 : ControlScheme.Controller;
