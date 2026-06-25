@@ -3,6 +3,7 @@ using CtATracker.Utilities;
 using CtATracker.skills;
 using CtATracker.UI_element_prefabs;
 using Gma.System.MouseKeyHook;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -90,6 +91,18 @@ namespace CtATracker.secondary_windows
                 {
                     _skillKeyBindings[skill.HotKey] = skill;
                 }
+            }
+
+            var skillsWithKeys = character.Skills
+                .Where(s => s.HotKey != Key.None && s.TotalPoints > 0)
+                .ToList();
+            if (skillsWithKeys.Count != _skillKeyBindings.Count)
+            {
+                var dupes = skillsWithKeys.GroupBy(s => s.HotKey).Where(g => g.Count() > 1);
+                var msg = string.Join("\n", dupes.Select(g => $"  {g.Key}: {string.Join(", ", g.Select(s => s.Name))}"));
+                MessageBox.Show($"Duplicate hotkeys detected:\n{msg}\n\nThe overlay will now close.",
+                    "Hotkey Conflict", MessageBoxButton.OK, MessageBoxImage.Warning);
+                this.Close();
             }
         }
 
