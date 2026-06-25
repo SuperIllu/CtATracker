@@ -65,20 +65,26 @@ namespace CtATracker.window_elements
             newSkillUIEntry.LinkHandlers(_characterHandler);
             newSkillUIEntry.SkillName = skill.Name;
             newSkillUIEntry.SkillLevel = skill.TotalPoints.ToString();
-            newSkillUIEntry.SetHotKey(skill.HotKey);
+            newSkillUIEntry.SetKeyboardHotKey(skill.HotKey);
+            newSkillUIEntry.SetGamepadButton(skill.GamepadButton);
             newSkillUIEntry.LinkSkillRemovalCallback((skillName) =>
             {
                 _characterHandler.CurrentChar?.RemoveSkill(skillName, _skillHandler);
                 SelectCharacter(_characterHandler.CurrentChar);
                 _characterHandler.SkillsUpdated();
             });
-            newSkillUIEntry.OnHotKeySelected += (skillName, key) =>
+            newSkillUIEntry.OnKeyboardHotkeySelected += (skillName, key) =>
             {
                 if (_characterHandler.CurrentChar is null) return;
-                _characterHandler.CurrentChar.SetHotkey(skillName, key);
+                _characterHandler.CurrentChar.SetKeyboardHotkey(skillName, key);
                 _characterHandler.SkillsUpdated();
             };
-            // TODO load key binding
+            newSkillUIEntry.OnGamepadButtonSelected += (skillName, button) =>
+            {
+                if (_characterHandler.CurrentChar is null) return;
+                _characterHandler.CurrentChar.SetGamepadButton(skillName, button);
+                _characterHandler.SkillsUpdated();
+            };
             SkillsPanel.Children.Add(newSkillUIEntry);
         }
 

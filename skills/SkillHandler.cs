@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Input;
 
 
+
 [assembly: InternalsVisibleTo("CtATracker.Tests")]
 
 namespace CtATracker.skills
@@ -29,6 +30,7 @@ namespace CtATracker.skills
             public int TotalPoints;
             public int HardPoints;
             public Key HotKey;
+            public GamepadButton GamepadButton;
 
             public override string ToString() => $"{Name} (Total: {TotalPoints}, Hard: {HardPoints})";
         }

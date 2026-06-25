@@ -197,14 +197,20 @@ namespace CtATracker.characters
             else
             {
                 // if the synergy skill does not exist, create it with 0 total points
-                AddSkill(new SkillHandler.SkillConfig() { Name = skillName, HardPoints = hardPoints, TotalPoints = 0, HotKey = System.Windows.Input.Key.None });
+                AddSkill(new SkillHandler.SkillConfig() { Name = skillName, HardPoints = hardPoints, TotalPoints = 0, HotKey = System.Windows.Input.Key.None, GamepadButton = CtATracker.skills.GamepadButton.None });
             }
         }
 
-        internal void SetHotkey(string skillName, Key key)
+        internal void SetKeyboardHotkey(string skillName, Key key)
         {
             var skillEntry = Skills.Find(s => s.Name == skillName);
             skillEntry.HotKey = key;
+        }
+
+        internal void SetGamepadButton(string skillName, GamepadButton button)
+        {
+            var skillEntry = Skills.Find(s => s.Name == skillName);
+            skillEntry.GamepadButton = button;
         }
     }
 }

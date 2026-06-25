@@ -2,6 +2,7 @@
 using CtATracker.Utilities;
 using CtATracker.skills;
 using CtATracker.UI_element_prefabs;
+using CtATracker.window_elements;
 using Gma.System.MouseKeyHook;
 using System.Linq;
 using System.Windows;
@@ -37,8 +38,10 @@ namespace CtATracker.secondary_windows
         private DispatcherTimer _timer;
 
         private Dictionary<Key, SkillHandler.SkillConfig> _skillKeyBindings;
+        private Dictionary<GamepadButton, SkillHandler.SkillConfig> _skillGamepadBindings;
         private SkillHandler _skillHandler;
         private CharacterEntry _character;
+        private ControlScheme _controlScheme;
 
 
         private ColourPalette colourPalette = new ColourPalette();
@@ -50,9 +53,10 @@ namespace CtATracker.secondary_windows
         private const string BattleCommandsSkillName = "BattleCommand";
 
 
-        public SummaryWindow(CharacterEntry character, SkillHandler skillHandler)
+        public SummaryWindow(CharacterEntry character, SkillHandler skillHandler, ControlScheme controlScheme)
         {
             InitializeComponent();
+            _controlScheme = controlScheme;
             _keyboardEvents = Hook.GlobalEvents();
             _keyboardEvents.KeyDown += OnKeyDown;
 
@@ -85,11 +89,16 @@ namespace CtATracker.secondary_windows
         private void SetupKeys(CharacterEntry character)
         {
             _skillKeyBindings = new Dictionary<Key, SkillHandler.SkillConfig>();
+            _skillGamepadBindings = new Dictionary<GamepadButton, SkillHandler.SkillConfig>();
             foreach (var skill in character.Skills)
             {
                 if (skill.HotKey != Key.None && skill.TotalPoints > 0)
                 {
                     _skillKeyBindings[skill.HotKey] = skill;
+                }
+                if (skill.GamepadButton != GamepadButton.None && skill.TotalPoints > 0)
+                {
+                    _skillGamepadBindings[skill.GamepadButton] = skill;
                 }
             }
 
@@ -102,6 +111,18 @@ namespace CtATracker.secondary_windows
                 var msg = string.Join("\n", dupes.Select(g => $"  {g.Key}: {string.Join(", ", g.Select(s => s.Name))}"));
                 MessageBox.Show($"Duplicate hotkeys detected:\n{msg}\n\nThe overlay will now close.",
                     "Hotkey Conflict", MessageBoxButton.OK, MessageBoxImage.Warning);
+                this.Close();
+            }
+
+            var skillsWithGamepad = character.Skills
+                .Where(s => s.GamepadButton != GamepadButton.None && s.TotalPoints > 0)
+                .ToList();
+            if (skillsWithGamepad.Count != _skillGamepadBindings.Count)
+            {
+                var dupes = skillsWithGamepad.GroupBy(s => s.GamepadButton).Where(g => g.Count() > 1);
+                var msg = string.Join("\n", dupes.Select(g => $"  {g.Key}: {string.Join(", ", g.Select(s => s.Name))}"));
+                MessageBox.Show($"Duplicate gamepad buttons detected:\n{msg}\n\nThe overlay will now close.",
+                    "Gamepad Conflict", MessageBoxButton.OK, MessageBoxImage.Warning);
                 this.Close();
             }
         }

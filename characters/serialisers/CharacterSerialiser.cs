@@ -29,6 +29,7 @@ namespace CtATracker.characters.serialisers
                     hardPoints = skill.HardPoints,
                     totalPoints = skill.TotalPoints,
                     hotKey = skill.HotKey,
+                    gamepadButton = skill.GamepadButton,
                 }).Where(skill => skill.hardPoints > 0 || skill.totalPoints > 0).ToList()
             }).ToList();
             return serializer.Serialize(serializableList);
@@ -86,13 +87,24 @@ namespace CtATracker.characters.serialisers
                             hotKey = Key.None; // Default to None if parsing fails
                         }
 
+                        GamepadButton gamepadButton = GamepadButton.None;
+                        if (skillDict.ContainsKey("gamepadButton"))
+                        {
+                            string gpStr = skillDict["gamepadButton"].ToString();
+                            if (!Enum.TryParse(gpStr, out gamepadButton))
+                            {
+                                gamepadButton = GamepadButton.None;
+                            }
+                        }
+
 
                         charEntry.Skills.Add(new SkillHandler.SkillConfig
                         {
                             Name = skillName,
                             HardPoints = hardPoints,
                             TotalPoints = totalPoints,
-                            HotKey = hotKey
+                            HotKey = hotKey,
+                            GamepadButton = gamepadButton
                         });
                     }
                 }

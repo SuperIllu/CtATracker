@@ -25,7 +25,7 @@ namespace CtATracker
 
         public MainWindow()
         {
-            InitializeComponent();
+            _characterHandler = new CharacterHandler(new CharacterFileHandler(CharacterFileName));
             try
             {
                 _skillHandler = new SkillHandler(new SkillFileHandler(SkillFileName));
@@ -36,13 +36,15 @@ namespace CtATracker
                 Application.Current.Shutdown();
                 return;
             }
-            _characterHandler = new CharacterHandler(new CharacterFileHandler(CharacterFileName));
+
+            InitializeComponent();
 
             _characterHandler.OnCharacterSelected += CharacterSelected;
             SkillList.LinkHandler(_skillHandler, _characterHandler);
             SynergyList.LinkHandlers(_skillHandler, _characterHandler);
             CharacterSelection.Initialize(_characterHandler);
             CheckForCharacter();
+
         }
 
         private void CheckForCharacter()
@@ -56,15 +58,27 @@ namespace CtATracker
         {
             if (_characterHandler.CurrentChar == null) return;
 
-            var dupes = _characterHandler.CurrentChar.Skills
+            var keyDupes = _characterHandler.CurrentChar.Skills
                 .Where(s => s.HotKey != Key.None && s.TotalPoints > 0)
                 .GroupBy(s => s.HotKey)
                 .Where(g => g.Count() > 1)
                 .ToList();
-            if (dupes.Any())
+            if (keyDupes.Any())
             {
-                var msg = string.Join("\n", dupes.Select(g => $"  {g.Key}: {string.Join(", ", g.Select(s => s.Name))}"));
+                var msg = string.Join("\n", keyDupes.Select(g => $"  {g.Key}: {string.Join(", ", g.Select(s => s.Name))}"));
                 MessageBox.Show($"Duplicate hotkeys found:\n{msg}\n\nFix them before starting the overlay.", "Hotkey Conflict", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var gpDupes = _characterHandler.CurrentChar.Skills
+                .Where(s => s.GamepadButton != GamepadButton.None && s.TotalPoints > 0)
+                .GroupBy(s => s.GamepadButton)
+                .Where(g => g.Count() > 1)
+                .ToList();
+            if (gpDupes.Any())
+            {
+                var msg = string.Join("\n", gpDupes.Select(g => $"  {g.Key}: {string.Join(", ", g.Select(s => s.Name))}"));
+                MessageBox.Show($"Duplicate gamepad buttons found:\n{msg}\n\nFix them before starting the overlay.", "Gamepad Conflict", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -78,7 +92,7 @@ namespace CtATracker
             else
             {
                 // start overlay
-                _overlayWindow = new SummaryWindow(_characterHandler.CurrentChar, _skillHandler);
+                _overlayWindow = new SummaryWindow(_characterHandler.CurrentChar, _skillHandler, _characterHandler.CurrentControlScheme);
                 _overlayWindow.Owner = this;
                 _overlayWindow.Show();
                 StartOverlayButton.Content = "Stop overlay";
@@ -86,6 +100,13 @@ namespace CtATracker
 
         }
 
+
+        private void InputMode_Changed(object sender, RoutedEventArgs e)
+        {
+            _characterHandler.CurrentControlScheme = KeyboardModeRadio.IsChecked == true
+                ? ControlScheme.Keyboard
+                : ControlScheme.Controller;
+        }
 
         /// <summary>
         /// Callback to update the UI when a character is selected.

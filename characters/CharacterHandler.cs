@@ -1,4 +1,5 @@
 ﻿using CtATracker.characters.serialisers;
+using CtATracker.window_elements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,6 +23,7 @@ namespace CtATracker.characters
         public event Action<CharacterEntry>? OnCharacterSelected;
 
         public CharacterEntry? CurrentChar { get; private set; } = null;
+        public ControlScheme CurrentControlScheme { get; set; } = ControlScheme.Keyboard;
         public event Action? OnSkillAddedOrRemoved;
 
         internal CharacterHandler(ICharacterFileHandler fileHandler)

@@ -1,4 +1,6 @@
 using CtATracker.characters;
+using CtATracker.skills;
+using CtATracker.window_elements;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -15,9 +17,11 @@ namespace CtATracker.UI_element_prefabs
     {
         private static SkillEntryControl? _listeningButton;
         private Key _lastCapturedKey;
+        private GamepadButton _lastCapturedGamepadButton;
         private readonly Brush _defaultBg;
 
-        public event Action<string, Key> OnHotKeySelected;
+        public event Action<string, Key> OnKeyboardHotkeySelected;
+        public event Action<string, GamepadButton> OnGamepadButtonSelected;
         private Action<string> _removeSkillCallback;
         private Action _onStartListening;
         private Action _onStopListening;
@@ -94,6 +98,10 @@ namespace CtATracker.UI_element_prefabs
             DeleteButton.IsEnabled = false; // Disable the delete button while capturing key
         }
 
+        private void CaptureGamepad_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (_listeningButton == null)
@@ -135,7 +143,7 @@ namespace CtATracker.UI_element_prefabs
                     string keyName = capturedKey.ToString();
                     KeyButton.Content = $"K: {keyName}";
                     _lastCapturedKey = capturedKey;
-                    OnHotKeySelected?.Invoke(SkillName, capturedKey);
+                    OnKeyboardHotkeySelected?.Invoke(SkillName, capturedKey);
                     KeyButton.Background = Brushes.LightGray;
                     Debug.WriteLine($"Key captured: {capturedKey}");
                 }
@@ -206,10 +214,22 @@ namespace CtATracker.UI_element_prefabs
             }
         }
 
-        internal void SetHotKey(Key hotKey)
+        internal void SetKeyboardHotKey(Key hotKey)
         {
             KeyButton.Content = hotKey == Key.None ? "Key: --" : $"K: {hotKey}";
             _lastCapturedKey = hotKey;
+        }
+
+        internal void SetGamepadButton(GamepadButton button)
+        {
+            PadButton.Content = button == GamepadButton.None ? "Pad: --" : $"P: {button}";
+            _lastCapturedGamepadButton = button;
+        }
+
+        public void SetControlScheme(ControlScheme scheme)
+        {
+            KeyButton.Visibility = scheme == ControlScheme.Keyboard ? Visibility.Visible : Visibility.Collapsed;
+            PadButton.Visibility = scheme == ControlScheme.Controller ? Visibility.Visible : Visibility.Collapsed;
         }
 
 
