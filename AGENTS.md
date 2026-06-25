@@ -1,0 +1,71 @@
+# CtATracker — Agent Guide
+
+
+## Environment
+It is likely, that opencode is executed in the WSL environment. This can be verified by running
+```bash
+wslinfo --version
+```
+and checking the return code. At the start of the session run this check and store the information for later.
+
+
+## Build & Test
+
+```bash
+dotnet build CtATracker.sln -c Debug
+dotnet test CtATracker.Tests/CtATracker.Tests.csproj
+```
+
+Windows-only (`net8.0-windows`, WPF). No CI, no linter, no formatter config.
+
+Note: if you are executing in the WSL environment, use `dotnet.exe` instead of `dotnet`. Also apply this change for later mentions of the `dotnet` command.
+
+## Project Structure
+
+- **`CtATracker/`** — WPF app (WinExe). Entrypoint `App.xaml` → `MainWindow.xaml`.
+- **`CtATracker.Tests/`** — MSTest tests. Mock file handlers live alongside tests.
+- No MVVM; UI built imperatively (direct `Children.Add`, no data binding).
+
+## Runtime Config
+
+- **`Skills.yml`** — skill definitions with NCalc duration formulas. Copied to output dir. Uses `{level}` and `{SynergyName}` placeholders.
+- **`Characters.yml`** — auto-created character data (name, skill levels, hard points, hotkeys).
+
+## Test Quirks
+
+- Tests load `TestData/Characters.yml` and `TestData/Skills.yml` from `AppContext.BaseDirectory` + `"TestData/"`.
+- Test data uses `CamelCaseNamingConvention` matching the serializer.
+- `CharacterFileHandlerMock` and `SkillFileHandlerMock` are in-memory stubs.
+
+## Known Bugs
+
+Consult these tickets before making unrelated changes — many touch the same files:
+
+| Ticket | File(s) | Issue |
+|---|---|---|
+| T-001 | `Skills.yml` | Typos: CillingArmor/ChillingAmor → ChillingArmor |
+| T-002 | `FileHandler.cs`, `SkillHandler.cs`, `SummaryWindow.xaml` | Dead code / duplicate methods / unused XAML elements |
+| T-003 | `SummaryWindow.xaml.cs` | Global keyboard hook leaked — `Closed` event never subscribed |
+| T-004 | `SkillHandler.cs`, `SummaryWindow.xaml.cs` | `GetSkill` returns `default` → NRE on missing skill |
+| T-005 | `CharacterEntry.cs` | `RemoveSynergySkill` — `FirstOrDefault` can return null |
+| T-006 | `CharacterHandler.cs` | `AddNewCharacter` doesn't auto-save |
+| T-007 | `MainWindow.xaml.cs` | Missing `Skills.yml` crashes at startup ungracefully |
+| T-008 | `SummaryWindow.xaml.cs` | Duplicate hotkeys silently overwrite each other |
+
+## Gotchas
+
+- `GetSkill()` returns a struct `Skill` (not nullable). Prefer `TryGetSkill()`.
+- `SkillConfig` uses public fields, not properties.
+- `SkillEntryControl` uses static fields (`_listeningButton`) — only one instance can capture a key at a time.
+- Overlay window has hardcoded demo XAML timer entries that are never used (dynamically replaced).
+- Character `Name` is also the dictionary key — renaming not supported without delete+recreate.
+
+
+## Workflow & Git Guardrails
+- **Branch Protection:** Under no circumstances are you allowed to commit or push directly to the `master` or `main` branches. 
+- **Feature Branches:** Before making any code modifications, check the current git branch. If you are on `master` or `main`, you must use the bash tool to create and switch to a new feature branch prefixed with `agent/` (e.g., `agent/fix-wpf-binding`).
+- **Atomic Commits:** Make small, logical commits as you complete sub-tasks rather than one massive commit at the end.
+
+- **No Unauthorized Dependencies:** You are strictly forbidden from modifying the `.csproj` file to add new NuGet packages unless explicitly requested by the human. Use native .NET framework features or existing project libraries only.
+
+- **Build-Only Constraint:** You may run `dotnet build` to verify code correctness via the compiler. However, do not attempt to execute or run the WPF GUI application (`dotnet run`) inside this WSL environment, as it lacks a desktop display server. 

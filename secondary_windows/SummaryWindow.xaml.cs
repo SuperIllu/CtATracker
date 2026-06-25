@@ -1,21 +1,11 @@
 ﻿using CtATracker.characters;
 using CtATracker.Utilities;
 using CtATracker.skills;
-using CtATracker.skills.serialisers;
 using CtATracker.UI_element_prefabs;
 using Gma.System.MouseKeyHook;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Diagnostics;
 
@@ -41,14 +31,9 @@ namespace CtATracker.secondary_windows
         }
 
         public const float TimerResolution = 0.2f;
-        private IKeyboardMouseEvents _keyboardEvents;
-
-        private bool _isListening = false;
-        private bool _keysLoaded = false;
+        private readonly IKeyboardMouseEvents _keyboardEvents;
 
         private DispatcherTimer _timer;
-        private float _remainingBattleOrderTime;
-        private float _remainingBattleCommandsTime;
 
         private Dictionary<Key, SkillHandler.SkillConfig> _skillKeyBindings;
         private SkillHandler _skillHandler;
@@ -63,8 +48,6 @@ namespace CtATracker.secondary_windows
         // gives you a bonus point
         private const string BattleCommandsSkillName = "BattleCommand";
 
-        //private Skills.Levels _levels;
-
 
         public SummaryWindow(CharacterEntry character, SkillHandler skillHandler)
         {
@@ -78,7 +61,6 @@ namespace CtATracker.secondary_windows
             InitialiseTimers();
             GenerateUIElements();
 
-            _isListening = true;
             SetListenging(true);
             CreateTimer();
 
@@ -145,21 +127,6 @@ namespace CtATracker.secondary_windows
             Key wpfKey = KeyInterop.KeyFromVirtualKey((int)e.KeyCode);
 
             Debug.WriteLine($"hotkey {e}->{wpfKey} pressed");
-
-            /*
-             * TODO implement toggle listening?
-            if (wpfKey == ToggleListening)
-            {
-                _isListening = !_isListening;
-                SetListenging(_isListening);
-            }
-            */
-
-
-            if (!_isListening)
-            {
-                return; // Ignore key presses if not listening
-            }
 
             if (_skillKeyBindings.TryGetValue(wpfKey, out var skillConfig))
             {
