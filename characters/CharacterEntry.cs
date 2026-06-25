@@ -126,6 +126,7 @@ namespace CtATracker.characters
         private void RemoveSynergySkill(string synergySkillName, SkillHandler skillHandler)
         {
             var synergySkill = Skills.FirstOrDefault(s => s.Name == synergySkillName);
+            if (synergySkill is null) return;
             // don't remove synergy skill if it is used itself as a main skill
             if (synergySkill.TotalPoints == 0)
             {
