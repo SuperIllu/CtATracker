@@ -13,9 +13,9 @@ namespace CtATracker.UI_element_prefabs
     /// </summary>
     public partial class SkillEntryControl : UserControl
     {
-        private static bool _isCapturingKey;
         private static SkillEntryControl? _listeningButton;
         private Key _lastCapturedKey;
+        private readonly Brush _defaultBg;
 
         public event Action<string, Key> OnHotKeySelected;
         private Action<string> _removeSkillCallback;
@@ -26,6 +26,7 @@ namespace CtATracker.UI_element_prefabs
         public SkillEntryControl()
         {
             InitializeComponent();
+            _defaultBg = KeyButton.Background;
         }
 
         public void LinkSkillRemovalCallback(Action<string> callback)
@@ -99,8 +100,8 @@ namespace CtATracker.UI_element_prefabs
                 return;
 
             _listeningButton = null;
-            this.PreviewKeyDown -= Window_PreviewKeyDown; // Remove the handler
-            DeleteButton.IsEnabled = true; // Re-enable the delete button
+            this.PreviewKeyDown -= Window_PreviewKeyDown;
+            DeleteButton.IsEnabled = true;
 
             Key capturedKey = e.Key;
             // handle OS level interceptions, e.g. F10
@@ -111,28 +112,36 @@ namespace CtATracker.UI_element_prefabs
 
             if (capturedKey == Key.Escape)
             {
-                // Cancel
-                KeyButton.Content = "Key: --";
+                KeyButton.Content = _lastCapturedKey == Key.None ? "Key: --" : $"K: {_lastCapturedKey}";
+                KeyButton.Background = Brushes.LightGray;
             }
             else
             {
-                // Save the key (store however you like)
-                string keyName = capturedKey.ToString();
-                KeyButton.Content = $"K: {keyName}";
+                bool isDuplicate = _characterHandler?.CurrentChar?.Skills
+                    .Any(s => s.Name != SkillName && s.HotKey == capturedKey) ?? false;
 
-                // Optionally: store this key in a variable or property
-                _lastCapturedKey = capturedKey;
-                OnHotKeySelected?.Invoke(SkillName, capturedKey);
-
-                Debug.WriteLine($"Key captured: {capturedKey}");
+                if (isDuplicate)
+                {
+                    KeyButton.Content = _lastCapturedKey == Key.None ? "Key: --" : $"K: {_lastCapturedKey}";
+                    KeyButton.Background = Brushes.Red;
+                    _ = Task.Run(async () =>
+                    {
+                        await Task.Delay(500);
+                        Dispatcher.Invoke(() => KeyButton.Background = _defaultBg);
+                    });
+                }
+                else
+                {
+                    string keyName = capturedKey.ToString();
+                    KeyButton.Content = $"K: {keyName}";
+                    _lastCapturedKey = capturedKey;
+                    OnHotKeySelected?.Invoke(SkillName, capturedKey);
+                    KeyButton.Background = Brushes.LightGray;
+                    Debug.WriteLine($"Key captured: {capturedKey}");
+                }
             }
 
-            // Reset button highlight
-            KeyButton.Background = Brushes.LightGray;
-
-            // Prevent further handling if needed
             e.Handled = true;
-
             _onStopListening?.Invoke();
         }
 

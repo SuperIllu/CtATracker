@@ -4,7 +4,9 @@ using CtATracker.secondary_windows;
 using CtATracker.window_elements;
 using CtATracker.skills;
 using CtATracker.skills.serialisers;
+using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 
 namespace CtATracker
@@ -53,6 +55,18 @@ namespace CtATracker
         private void StartOverlay_Click(object sender, RoutedEventArgs e) 
         {
             if (_characterHandler.CurrentChar == null) return;
+
+            var dupes = _characterHandler.CurrentChar.Skills
+                .Where(s => s.HotKey != Key.None && s.TotalPoints > 0)
+                .GroupBy(s => s.HotKey)
+                .Where(g => g.Count() > 1)
+                .ToList();
+            if (dupes.Any())
+            {
+                var msg = string.Join("\n", dupes.Select(g => $"  {g.Key}: {string.Join(", ", g.Select(s => s.Name))}"));
+                MessageBox.Show($"Duplicate hotkeys found:\n{msg}\n\nFix them before starting the overlay.", "Hotkey Conflict", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             if (_overlayWindow != null)
             {
