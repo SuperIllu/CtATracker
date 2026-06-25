@@ -33,7 +33,7 @@ namespace CtATracker.secondary_windows
         }
 
         public const float TimerResolution = 0.2f;
-        private readonly IKeyboardMouseEvents _keyboardEvents;
+        private readonly IKeyboardMouseEvents? _keyboardEvents;
 
         private DispatcherTimer _timer;
 
@@ -42,6 +42,7 @@ namespace CtATracker.secondary_windows
         private SkillHandler _skillHandler;
         private CharacterEntry _character;
         private ControlScheme _controlScheme;
+        private XINPUT_STATE _previousGamepadState;
 
 
         private ColourPalette colourPalette = new ColourPalette();
@@ -57,8 +58,11 @@ namespace CtATracker.secondary_windows
         {
             InitializeComponent();
             _controlScheme = controlScheme;
-            _keyboardEvents = Hook.GlobalEvents();
-            _keyboardEvents.KeyDown += OnKeyDown;
+            if (_controlScheme == ControlScheme.Keyboard)
+            {
+                _keyboardEvents = Hook.GlobalEvents();
+                _keyboardEvents.KeyDown += OnKeyDown;
+            }
 
             _skillHandler = skillHandler;
             _character = character;
@@ -71,11 +75,18 @@ namespace CtATracker.secondary_windows
             this.Closed += OnClosed;
         }
 
+        private IEnumerable<SkillHandler.SkillConfig> GetBoundSkills()
+        {
+            return _controlScheme == ControlScheme.Keyboard
+                ? _skillKeyBindings.Values
+                : _skillGamepadBindings.Values;
+        }
+
         private void GenerateUIElements()
         {
             _skillUIElements = new Dictionary<SkillHandler.SkillConfig, TimerWindowEntry>();
             TimerEntriesPanel.Children.Clear(); // Clear existing entries
-            foreach (var skill in _skillKeyBindings.Values)
+            foreach (var skill in GetBoundSkills())
             {
                 TimerWindowEntry entry = new TimerWindowEntry();
                 entry.SetSkillName(skill.Name);
@@ -130,7 +141,7 @@ namespace CtATracker.secondary_windows
         private void InitialiseTimers()
         {
             _skillTimes = new Dictionary<SkillHandler.SkillConfig, Times>();
-            foreach (var skill in _skillKeyBindings.Values)
+            foreach (var skill in GetBoundSkills())
             {
                 _skillTimes[skill] = new();
             }
@@ -138,8 +149,11 @@ namespace CtATracker.secondary_windows
 
         private void OnClosed(object? sender, EventArgs e)
         {
-            _keyboardEvents.KeyDown -= OnKeyDown;
-            _keyboardEvents.Dispose();
+            if (_keyboardEvents != null)
+            {
+                _keyboardEvents.KeyDown -= OnKeyDown;
+                _keyboardEvents.Dispose();
+            }
         }
 
         public void LoadLevels(object levels)
@@ -233,6 +247,11 @@ namespace CtATracker.secondary_windows
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
+            if (_controlScheme == ControlScheme.Controller)
+            {
+                PollGamepad();
+            }
+
             foreach (var skill in _skillTimes.Keys)
             {
                 if (_skillTimes[skill].CurrentTime > 0)
@@ -246,6 +265,25 @@ namespace CtATracker.secondary_windows
             }
 
             UpdateUI();
+        }
+
+        private void PollGamepad()
+        {
+            XINPUT_STATE state = new XINPUT_STATE();
+            int result = XInput.XInputGetState(0, ref state);
+            if (result != XInput.ERROR_SUCCESS) return;
+
+            foreach (var kvp in _skillGamepadBindings)
+            {
+                if (XInput.IsButtonHeld(state, kvp.Key) && !XInput.IsButtonHeld(_previousGamepadState, kvp.Key))
+                {
+                    float skillTime = CalculateSkillTime(kvp.Value);
+                    _skillTimes[kvp.Value].CurrentTime = skillTime;
+                    _skillTimes[kvp.Value].MaxTime = skillTime;
+                }
+            }
+
+            _previousGamepadState = state;
         }
 
         private void UpdateUI()

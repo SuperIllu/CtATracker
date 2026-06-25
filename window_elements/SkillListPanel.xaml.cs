@@ -67,6 +67,7 @@ namespace CtATracker.window_elements
             newSkillUIEntry.SkillLevel = skill.TotalPoints.ToString();
             newSkillUIEntry.SetKeyboardHotKey(skill.HotKey);
             newSkillUIEntry.SetGamepadButton(skill.GamepadButton);
+            newSkillUIEntry.SetControlScheme(_characterHandler.CurrentControlScheme);
             newSkillUIEntry.LinkSkillRemovalCallback((skillName) =>
             {
                 _characterHandler.CurrentChar?.RemoveSkill(skillName, _skillHandler);
@@ -157,6 +158,14 @@ namespace CtATracker.window_elements
             }
 
             SkillComboBox.SelectedIndex = 0; // Optional default selection
+        }
+
+        internal void UpdateControlScheme(ControlScheme scheme)
+        {
+            foreach (SkillEntryControl entry in SkillsPanel.Children)
+            {
+                entry.SetControlScheme(scheme);
+            }
         }
     }
 }

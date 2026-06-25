@@ -106,6 +106,7 @@ namespace CtATracker
             _characterHandler.CurrentControlScheme = KeyboardModeRadio.IsChecked == true
                 ? ControlScheme.Keyboard
                 : ControlScheme.Controller;
+            SkillList.UpdateControlScheme(_characterHandler.CurrentControlScheme);
         }
 
         /// <summary>

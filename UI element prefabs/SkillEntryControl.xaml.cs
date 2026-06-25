@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace CtATracker.UI_element_prefabs
 {
@@ -19,6 +20,10 @@ namespace CtATracker.UI_element_prefabs
         private Key _lastCapturedKey;
         private GamepadButton _lastCapturedGamepadButton;
         private readonly Brush _defaultBg;
+
+        private DispatcherTimer? _gamepadPollTimer;
+        private DispatcherTimer? _gamepadTimeoutTimer;
+        private XINPUT_STATE _previousCaptureState;
 
         public event Action<string, Key> OnKeyboardHotkeySelected;
         public event Action<string, GamepadButton> OnGamepadButtonSelected;
@@ -100,6 +105,99 @@ namespace CtATracker.UI_element_prefabs
 
         private void CaptureGamepad_Click(object sender, RoutedEventArgs e)
         {
+            if (_listeningButton != null)
+            {
+                if (_listeningButton != this)
+                    _listeningButton.Focus();
+                return;
+            }
+
+            _onStartListening?.Invoke();
+            _listeningButton = this;
+            PadButton.Content = "Press button";
+            PadButton.Background = Brushes.Yellow;
+            DeleteButton.IsEnabled = false;
+            _previousCaptureState = new XINPUT_STATE();
+
+            this.PreviewKeyDown += GamepadCapture_PreviewKeyDown;
+
+            _gamepadPollTimer = new DispatcherTimer();
+            _gamepadPollTimer.Interval = TimeSpan.FromMilliseconds(16);
+            _gamepadPollTimer.Tick += GamepadPollTimer_Tick;
+            _gamepadPollTimer.Start();
+
+            _gamepadTimeoutTimer = new DispatcherTimer();
+            _gamepadTimeoutTimer.Interval = TimeSpan.FromSeconds(3);
+            _gamepadTimeoutTimer.Tick += GamepadTimeout_Tick;
+            _gamepadTimeoutTimer.Start();
+        }
+
+        private void CancelGamepadCapture()
+        {
+            _gamepadPollTimer?.Stop();
+            _gamepadTimeoutTimer?.Stop();
+            this.PreviewKeyDown -= GamepadCapture_PreviewKeyDown;
+            _listeningButton = null;
+            DeleteButton.IsEnabled = true;
+
+            PadButton.Content = _lastCapturedGamepadButton == GamepadButton.None ? "Pad: --" : $"P: {_lastCapturedGamepadButton}";
+            PadButton.Background = Brushes.LightGray;
+            _onStopListening?.Invoke();
+        }
+
+        private void GamepadPollTimer_Tick(object? sender, EventArgs e)
+        {
+            XINPUT_STATE state = new XINPUT_STATE();
+            int result = XInput.XInputGetState(0, ref state);
+            if (result != XInput.ERROR_SUCCESS) return;
+
+            GamepadButton? pressed = XInput.DetectButtonPress(state, _previousCaptureState);
+            _previousCaptureState = state;
+            if (pressed == null) return;
+
+            _gamepadPollTimer?.Stop();
+            _gamepadTimeoutTimer?.Stop();
+            this.PreviewKeyDown -= GamepadCapture_PreviewKeyDown;
+            _listeningButton = null;
+            DeleteButton.IsEnabled = true;
+
+            bool isDuplicate = _characterHandler?.CurrentChar?.Skills
+                .Any(s => s.Name != SkillName && s.GamepadButton == pressed.Value) ?? false;
+
+            if (isDuplicate)
+            {
+                PadButton.Content = _lastCapturedGamepadButton == GamepadButton.None ? "Pad: --" : $"P: {_lastCapturedGamepadButton}";
+                PadButton.Background = Brushes.Red;
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(500);
+                    Dispatcher.Invoke(() => PadButton.Background = _defaultBg);
+                });
+            }
+            else
+            {
+                PadButton.Content = $"P: {pressed.Value}";
+                _lastCapturedGamepadButton = pressed.Value;
+                OnGamepadButtonSelected?.Invoke(SkillName, pressed.Value);
+                PadButton.Background = Brushes.LightGray;
+                Debug.WriteLine($"Gamepad button captured: {pressed.Value}");
+            }
+
+            _onStopListening?.Invoke();
+        }
+
+        private void GamepadTimeout_Tick(object? sender, EventArgs e)
+        {
+            CancelGamepadCapture();
+        }
+
+        private void GamepadCapture_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                CancelGamepadCapture();
+                e.Handled = true;
+            }
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
