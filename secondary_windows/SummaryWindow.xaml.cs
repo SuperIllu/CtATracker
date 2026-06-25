@@ -63,7 +63,7 @@ namespace CtATracker.secondary_windows
 
             SetListenging(true);
             CreateTimer();
-
+            this.Closed += OnClosed;
         }
 
         private void GenerateUIElements()
