@@ -18,11 +18,11 @@
   calculation: "{level} * 12 + 108"
 - name: FrozenArmor
   shortName: FA
-  calculation: "{level} * 12 + 132 + ({ShiverArmor} + {ChillingAmor}) *10"
+  calculation: "{level} * 12 + 132 + ({ShiverArmor} + {ChillingArmor}) *10"
 - name: ShiverArmor
   shortName: SA
-  calculation: "{level} * 12 + 132 + ({FrozenArmor} + {ChillingAmor}) *10"
-- name: CillingArmor
+  calculation: "{level} * 12 + 132 + ({FrozenArmor} + {ChillingArmor}) *10"
+- name: ChillingArmor
   shortName: CA
   calculation: "{level} * 12 + 132 + ({FrozenArmor} + {ShiverArmor}) *10"
 # example skill with non-existing synergies
