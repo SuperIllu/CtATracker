@@ -142,7 +142,9 @@ namespace CtATracker.secondary_windows
             int bonusPoints = CalculateBonusPoints();
             int level = totalPoints + bonusPoints;
 
-            return _skillHandler.GetSkill(skillConfig.Name).DurationFunc(level, _character.MappedSkills);
+            if (_skillHandler.TryGetSkill(skillConfig.Name, out var skill))
+                return skill.DurationFunc(level, _character.MappedSkills);
+            return 0;
         }
 
         private int CalculateBonusPoints()
