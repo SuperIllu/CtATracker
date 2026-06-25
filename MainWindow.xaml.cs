@@ -24,7 +24,16 @@ namespace CtATracker
         public MainWindow()
         {
             InitializeComponent();
-            _skillHandler = new SkillHandler(new SkillFileHandler(SkillFileName));
+            try
+            {
+                _skillHandler = new SkillHandler(new SkillFileHandler(SkillFileName));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load skills: {ex.Message}\n\nThe application will now close.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Application.Current.Shutdown();
+                return;
+            }
             _characterHandler = new CharacterHandler(new CharacterFileHandler(CharacterFileName));
 
             _characterHandler.OnCharacterSelected += CharacterSelected;
