@@ -245,6 +245,12 @@ namespace CtATracker.secondary_windows
                 PollGamepad();
             }
 
+            DecrementTimers();
+            UpdateUI();
+        }
+
+        private void DecrementTimers()
+        {
             foreach (var skill in _skillTimes.Keys)
             {
                 if (_skillTimes[skill].CurrentTime > 0)
@@ -252,12 +258,10 @@ namespace CtATracker.secondary_windows
                     _skillTimes[skill].CurrentTime -= ConfigLoader.Instance.Overlay.TimerResolutionSec;
                     if (_skillTimes[skill].CurrentTime < 0)
                     {
-                        _skillTimes[skill].CurrentTime = 0; // Ensure it doesn't go negative
+                        _skillTimes[skill].CurrentTime = 0;
                     }
                 }
             }
-
-            UpdateUI();
         }
 
         private void PollGamepad()
