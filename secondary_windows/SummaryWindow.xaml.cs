@@ -291,7 +291,9 @@ namespace CtATracker.secondary_windows
                 Times time = _skillTimes[skill];
                 string timeText = time.CurrentTime <= 0 ? " --:--" : FormatSeconds(time.CurrentTime);
 
-                int percentage = (int)(time.CurrentTime * 100 / time.MaxTime);
+                int percentage = time.MaxTime > 0
+                    ? (int)(time.CurrentTime * 100 / time.MaxTime)
+                    : 0;
                 _skillUIElements[skill].SetTimeText(timeText, percentage);
             }
         }

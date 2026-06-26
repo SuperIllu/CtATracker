@@ -43,7 +43,11 @@ namespace CtATracker.window_elements
         {
             _skillHandler = skillHandler;
             _characterHandler = characterHandler;
-            _characterHandler.OnSkillAddedOrRemoved += () => _characterHandler_OnCharacterSelected(_characterHandler.CurrentChar);
+            _characterHandler.OnSkillAddedOrRemoved += () =>
+            {
+                if (_characterHandler.CurrentChar != null)
+                    _characterHandler_OnCharacterSelected(_characterHandler.CurrentChar);
+            };
             _characterHandler.OnCharacterSelected += _characterHandler_OnCharacterSelected;
         }
 
@@ -65,8 +69,13 @@ namespace CtATracker.window_elements
         }
         */
 
-        internal void ShowSynergiesForChar(CharacterEntry currentChar)
+        internal void ShowSynergiesForChar(CharacterEntry? currentChar)
         {
+            if (currentChar is null)
+            {
+                SynergyPanel.Children.Clear();
+                return;
+            }
             HashSet<string> synergies = currentChar.GetSynergies(_skillHandler);
             SynergyPanel.Children.Clear();
 
