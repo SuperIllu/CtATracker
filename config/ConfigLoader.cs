@@ -23,10 +23,27 @@ namespace CtATracker.config
         public CharacterDefaultsSection CharacterDefaults { get; set; } = new();
         public BattleCommandSection BattleCommand { get; set; } = new();
         public SkillShrineSection SkillShrine { get; set; } = new();
-        public List<string> TimerColors { get; set; } = new();
+        public List<string> TimerColors { get; set; } = new()
+        {
+            "#FF6C8EBF",
+            "#FFB19C63",
+            "#FF7FBF7F",
+            "#FFBF7F7F",
+            "#FFA89CBF",
+            "#FF7FBFBF",
+        };
 
         public static ConfigLoader Load(string filePath)
         {
+            if (!File.Exists(filePath))
+            {
+                var serializer = new SerializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .Build();
+                string defaultYaml = serializer.Serialize(new ConfigLoader());
+                File.WriteAllText(filePath, defaultYaml);
+            }
+
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
