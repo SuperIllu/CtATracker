@@ -12,6 +12,8 @@ namespace CtATracker.UI_element_prefabs
     /// </summary>
     public partial class SynergySkill : UserControl
     {
+        private CharacterHandler _characterHandler;
+
         public SynergySkill()
         {
             InitializeComponent();
@@ -36,41 +38,21 @@ namespace CtATracker.UI_element_prefabs
 
 
         #region validating input to be only numbers
-        private static readonly Regex _intRegex = new Regex("^[0-9]+$"); // Only digits
-        private CharacterHandler _characterHandler;
 
         private void NumberOnlyTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !_intRegex.IsMatch(e.Text);
+            e.Handled = !NumericTextBoxBehavior.IsTextValid(e.Text);
         }
 
         private void NumberOnlyTextBox_Pasting(object sender, DataObjectPastingEventArgs e)
         {
-            if (e.DataObject.GetDataPresent(DataFormats.Text))
-            {
-                string text = e.DataObject.GetData(DataFormats.Text) as string;
-                if (!_intRegex.IsMatch(text))
-                {
-                    e.Handled = true;
-                    e.CancelCommand();
-                }
-            }
-            else
-            {
-                e.Handled = true;
-                e.CancelCommand();
-            }
-
-
+            NumericTextBoxBehavior.HandlePasting(e);
         }
 
         private void NumberOnlyTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            // Optional: block spacebar
-            if (e.Key == Key.Space)
-            {
+            if (NumericTextBoxBehavior.ShouldBlockKey(e.Key))
                 e.Handled = true;
-            }
         }
 
         private void NumberOnlyTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -83,7 +65,6 @@ namespace CtATracker.UI_element_prefabs
                 textBox.Text = "0";
             }
 
-            // If it's non-empty and valid, do something:
             if (int.TryParse(newText, out int skillLevel))
             {
                 _characterHandler.CurrentChar?.SetHardSkillPoints(SkillName, skillLevel);

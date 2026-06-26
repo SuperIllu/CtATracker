@@ -3,7 +3,6 @@ using CtATracker.config;
 using CtATracker.skills;
 using CtATracker.window_elements;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -269,40 +268,21 @@ namespace CtATracker.UI_element_prefabs
 
 
         #region validating input to be only numbers
-        private static readonly Regex _intRegex = new Regex("^[0-9]+$"); // Only digits
 
         private void NumberOnlyTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !_intRegex.IsMatch(e.Text);
+            e.Handled = !NumericTextBoxBehavior.IsTextValid(e.Text);
         }
 
         private void NumberOnlyTextBox_Pasting(object sender, DataObjectPastingEventArgs e)
         {
-            if (e.DataObject.GetDataPresent(DataFormats.Text))
-            {
-                string text = e.DataObject.GetData(DataFormats.Text) as string;
-                if (!_intRegex.IsMatch(text))
-                {
-                    e.Handled = true;
-                    e.CancelCommand();
-                }
-            }
-            else
-            {
-                e.Handled = true;
-                e.CancelCommand();
-            }
-
-
+            NumericTextBoxBehavior.HandlePasting(e);
         }
 
         private void NumberOnlyTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            // Optional: block spacebar
-            if (e.Key == Key.Space)
-            {
+            if (NumericTextBoxBehavior.ShouldBlockKey(e.Key))
                 e.Handled = true;
-            }
         }
 
         private void NumberOnlyTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -315,7 +295,6 @@ namespace CtATracker.UI_element_prefabs
                 textBox.Text = ConfigLoader.Instance.CharacterDefaults.InitialSkillLevel.ToString();
             }
 
-            // If it's non-empty and valid, do something:
             if (int.TryParse(newText, out int skillLevel))
             {
                 _characterHandler.CurrentChar?.SetTotalSkillPoints(SkillName, skillLevel);
