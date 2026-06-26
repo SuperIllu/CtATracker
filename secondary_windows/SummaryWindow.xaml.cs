@@ -174,11 +174,7 @@ namespace CtATracker.secondary_windows
             Debug.WriteLine($"hotkey {e}->{wpfKey} pressed");
 
             if (_skillKeyBindings.TryGetValue(wpfKey, out var skillConfig))
-            {
-                float skillTime = CalculateSkillTime(skillConfig);
-                _skillTimes[skillConfig].CurrentTime = skillTime;
-                _skillTimes[skillConfig].MaxTime = skillTime;
-            }
+                TriggerSkill(skillConfig);
         }
 
         private float CalculateSkillTime(SkillHandler.SkillConfig skillConfig)
@@ -273,14 +269,17 @@ namespace CtATracker.secondary_windows
             foreach (var kvp in _skillGamepadBindings)
             {
                 if (XInput.IsButtonHeld(state, kvp.Key) && !XInput.IsButtonHeld(_previousGamepadState, kvp.Key))
-                {
-                    float skillTime = CalculateSkillTime(kvp.Value);
-                    _skillTimes[kvp.Value].CurrentTime = skillTime;
-                    _skillTimes[kvp.Value].MaxTime = skillTime;
-                }
+                    TriggerSkill(kvp.Value);
             }
 
             _previousGamepadState = state;
+        }
+
+        private void TriggerSkill(SkillHandler.SkillConfig skillConfig)
+        {
+            float skillTime = CalculateSkillTime(skillConfig);
+            _skillTimes[skillConfig].CurrentTime = skillTime;
+            _skillTimes[skillConfig].MaxTime = skillTime;
         }
 
         private void UpdateUI()
