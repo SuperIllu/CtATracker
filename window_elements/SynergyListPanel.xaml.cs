@@ -52,23 +52,6 @@ namespace CtATracker.window_elements
         }
 
 
-        /*
-
-        public void UpdateSynergyList(CharacterEntry characterEntry, IEnumerable<string> synergies)
-        {
-            List<SkillConfig> filteredAndSortedSkills = characterEntry.Skills
-    .Where(skill => synergies.Contains(skill.Name))
-    .OrderByDescending(skill => skill.HardPoints)
-    .ToList();
-
-            SynergyPanel.Children.Clear();
-            foreach (var synergySkill in filteredAndSortedSkills)
-            {
-                AddSynergySkillToUI(synergySkill);
-            }
-        }
-        */
-
         internal void ShowSynergiesForChar(CharacterEntry? currentChar)
         {
             if (currentChar is null)
@@ -83,14 +66,7 @@ namespace CtATracker.window_elements
             foreach (string synergyName in synergies)
             {
                 SkillConfig entry = GetOrCreatePlaceholder(currentChar, synergyName);
-                if (!_skillHandler.TryGetSkill(synergyName, out _))
-                    Debug.WriteLine($"Pure Synergy skill '{synergyName}' -> placeholder.");
-                synergiesToList.Add(entry);
-            }
-
-            foreach (var synergySkill in synergiesToList)
-            {
-                AddSynergySkillToUI(synergySkill);
+                AddSynergySkillToUI(entry);
             }
         }
 
