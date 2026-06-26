@@ -82,59 +82,22 @@ namespace CtATracker.window_elements
             List<SkillConfig> synergiesToList = new();
             foreach (string synergyName in synergies)
             {
-                if (_skillHandler.TryGetSkill(synergyName, out Skill synergySkill))
-                {
-                    // the synergy skill is a normal skill 
-                    SkillConfig? potentialSkill = currentChar.Skills.Find(s => s.Name == synergyName);
-                    if (potentialSkill is not null)
-                    {
-                        synergiesToList.Add(potentialSkill);
-                    }
-                    else
-                    {
-                        // char doesn't have this skill - use temporary with 0 hard points
-                        synergiesToList.Add(new SkillConfig
-                        {
-                            Name = synergyName,
-                            HardPoints = 0 // or some default value, if applicable
-                        });
-                    }                    
-                }
-                else
-                {
-                    // this is a pure synergy skill - create a placeholder
-                    SkillConfig? potentialSkill = currentChar.Skills.Find(s => s.Name == synergyName);
-                    if (potentialSkill is not null)
-                    {
-                        synergiesToList.Add(potentialSkill);
-                    }
-                    else
-                    {
-                        // char doesn't have this skill - use temporary with 0 hard points
-                        synergiesToList.Add(new SkillConfig
-                        {
-                            Name = synergyName,
-                            HardPoints = 0 // or some default value, if applicable
-                        });
-                        Debug.WriteLine($"Pure Synergy skill '{synergyName}' -> placeholder.");
-                    }
-                    
-                }
-
-
+                SkillConfig entry = GetOrCreatePlaceholder(currentChar, synergyName);
+                if (!_skillHandler.TryGetSkill(synergyName, out _))
+                    Debug.WriteLine($"Pure Synergy skill '{synergyName}' -> placeholder.");
+                synergiesToList.Add(entry);
             }
-
-            /*
-            synergiesToList = synergies.Where(skill => charSkills.Keys.Contains(skill))
-                .Select(skill => charSkills[skill])
-                .OrderByDescending(skill => skill.HardPoints)
-                .ToList();
-            */
 
             foreach (var synergySkill in synergiesToList)
             {
                 AddSynergySkillToUI(synergySkill);
             }
+        }
+
+        private static SkillConfig GetOrCreatePlaceholder(CharacterEntry currentChar, string skillName)
+        {
+            return currentChar.Skills.Find(s => s.Name == skillName)
+                ?? new SkillConfig { Name = skillName, HardPoints = 0 };
         }
 
         private void AddSynergySkillToUI(SkillConfig synergySkill)
