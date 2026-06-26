@@ -20,20 +20,10 @@ namespace CtATracker.secondary_windows
     /// </summary>
     public partial class SummaryWindow : Window
     {
-        private class Times
-        {
-            public float CurrentTime;
-            public float MaxTime;
-
-            public override string ToString()
-            {
-                return $"{CurrentTime}/{MaxTime}";
-            }
-        }
-
         private readonly IKeyboardMouseEvents? _keyboardEvents;
 
         private DispatcherTimer _timer;
+        private SkillTimerManager _timerManager;
 
         private Dictionary<Key, SkillHandler.SkillConfig> _skillKeyBindings;
         private Dictionary<GamepadButton, SkillHandler.SkillConfig> _skillGamepadBindings;
@@ -44,9 +34,7 @@ namespace CtATracker.secondary_windows
 
 
         private ColourPalette colourPalette = new ColourPalette();
-        private Dictionary<SkillHandler.SkillConfig, Times> _skillTimes;
         private Dictionary<SkillHandler.SkillConfig, TimerWindowEntry> _skillUIElements;
-        private bool _skillShrineActive;
 
 
 
@@ -64,7 +52,7 @@ namespace CtATracker.secondary_windows
             _skillHandler = skillHandler;
             _character = character;
             SetupKeys(character);
-            InitialiseTimers();
+            _timerManager = new SkillTimerManager(_skillHandler, _character, GetBoundSkills());
             GenerateUIElements();
 
             SetListenging(true);
@@ -135,15 +123,6 @@ namespace CtATracker.secondary_windows
             }
         }
 
-        private void InitialiseTimers()
-        {
-            _skillTimes = new Dictionary<SkillHandler.SkillConfig, Times>();
-            foreach (var skill in GetBoundSkills())
-            {
-                _skillTimes[skill] = new();
-            }
-        }
-
         private void OnClosed(object? sender, EventArgs e)
         {
             if (_keyboardEvents != null)
@@ -177,35 +156,6 @@ namespace CtATracker.secondary_windows
                 TriggerSkill(skillConfig);
         }
 
-        private float CalculateSkillTime(SkillHandler.SkillConfig skillConfig)
-        {
-            int totalPoints = skillConfig.TotalPoints;
-            int bonusPoints = CalculateBonusPoints();
-            int level = totalPoints + bonusPoints;
-
-            if (_skillHandler.TryGetSkill(skillConfig.Name, out var skill))
-                return skill.DurationFunc(level, _character.MappedSkills);
-            return 0;
-        }
-
-        private int CalculateBonusPoints()
-        {
-            int bonusPoints = 0;
-            if (_character.MappedSkills.TryGetValue(ConfigLoader.Instance.BattleCommand.SkillName, out SkillHandler.SkillConfig? battleCommandsSkill))
-            {
-                if (_skillTimes.TryGetValue(battleCommandsSkill, out Times battleCommandsTime) && battleCommandsTime.CurrentTime > 0)
-                {
-                    bonusPoints += ConfigLoader.Instance.BattleCommand.BonusPoints;
-                }
-            }
-            if (_skillShrineActive)
-            {
-                bonusPoints += ConfigLoader.Instance.SkillShrine.BonusPoints;
-            }
-
-            return bonusPoints;
-        }
-
         public void SkillShrine_Click(object sender, RoutedEventArgs e)
         {
             ActivateSkillShrineTimer();
@@ -231,11 +181,11 @@ namespace CtATracker.secondary_windows
 
         private async void ActivateSkillShrineTimer()
         {
-            _skillShrineActive = true;
+            _timerManager.ActivateSkillShrine();
             SkillShrineButton.BorderBrush = Brushes.LimeGreen;
             await Task.Delay(TimeSpan.FromSeconds(ConfigLoader.Instance.SkillShrine.DurationSec)); 
-            _skillShrineActive = false;
-            SkillShrineButton.BorderBrush = Brushes.Transparent; // Reset border
+            _timerManager.DeactivateSkillShrine();
+            SkillShrineButton.BorderBrush = Brushes.Transparent;
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
@@ -251,17 +201,7 @@ namespace CtATracker.secondary_windows
 
         private void DecrementTimers()
         {
-            foreach (var skill in _skillTimes.Keys)
-            {
-                if (_skillTimes[skill].CurrentTime > 0)
-                {
-                    _skillTimes[skill].CurrentTime -= ConfigLoader.Instance.Overlay.TimerResolutionSec;
-                    if (_skillTimes[skill].CurrentTime < 0)
-                    {
-                        _skillTimes[skill].CurrentTime = 0;
-                    }
-                }
-            }
+            _timerManager.DecrementTimers(ConfigLoader.Instance.Overlay.TimerResolutionSec);
         }
 
         private void PollGamepad()
@@ -281,9 +221,7 @@ namespace CtATracker.secondary_windows
 
         private void TriggerSkill(SkillHandler.SkillConfig skillConfig)
         {
-            float skillTime = CalculateSkillTime(skillConfig);
-            _skillTimes[skillConfig].CurrentTime = skillTime;
-            _skillTimes[skillConfig].MaxTime = skillTime;
+            _timerManager.TriggerSkill(skillConfig);
         }
 
         private void UpdateUI()
@@ -291,7 +229,7 @@ namespace CtATracker.secondary_windows
             foreach (var uiElement in _skillUIElements)
             {
                 SkillHandler.SkillConfig skill = uiElement.Key;
-                Times time = _skillTimes[skill];
+                SkillTimerManager.Times time = _timerManager.SkillTimes[skill];
                 string timeText = time.CurrentTime <= 0 ? " --:--" : FormatSeconds(time.CurrentTime);
 
                 int percentage = time.MaxTime > 0
