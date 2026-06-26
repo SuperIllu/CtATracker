@@ -1,4 +1,5 @@
 using CtATracker.characters;
+using CtATracker.config;
 using CtATracker.skills;
 using CtATracker.window_elements;
 using System.Diagnostics;
@@ -128,12 +129,12 @@ namespace CtATracker.UI_element_prefabs
             this.PreviewKeyDown += GamepadCapture_PreviewKeyDown;
 
             _gamepadPollTimer = new DispatcherTimer();
-            _gamepadPollTimer.Interval = TimeSpan.FromMilliseconds(16);
+            _gamepadPollTimer.Interval = TimeSpan.FromMilliseconds(ConfigLoader.Instance.Gamepad.PollIntervalMs);
             _gamepadPollTimer.Tick += GamepadPollTimer_Tick;
             _gamepadPollTimer.Start();
 
             _gamepadTimeoutTimer = new DispatcherTimer();
-            _gamepadTimeoutTimer.Interval = TimeSpan.FromSeconds(3);
+            _gamepadTimeoutTimer.Interval = TimeSpan.FromSeconds(ConfigLoader.Instance.Gamepad.CaptureTimeoutSec);
             _gamepadTimeoutTimer.Tick += GamepadTimeout_Tick;
             _gamepadTimeoutTimer.Start();
         }
@@ -155,7 +156,8 @@ namespace CtATracker.UI_element_prefabs
         private void GamepadPollTimer_Tick(object? sender, EventArgs e)
         {
             double elapsed = (DateTime.UtcNow - _captureStartTime).TotalMilliseconds;
-            PadCaptureProgress.Value = Math.Max(0, 100 * (1 - elapsed / 3000));
+            int timeoutMs = ConfigLoader.Instance.Gamepad.CaptureTimeoutSec * 1000;
+            PadCaptureProgress.Value = Math.Max(0, 100 * (1 - elapsed / timeoutMs));
 
             XINPUT_STATE state = new XINPUT_STATE();
             int result = XInput.XInputGetState(0, ref state);
@@ -179,9 +181,10 @@ namespace CtATracker.UI_element_prefabs
                 PadButtonText.Text = _lastCapturedGamepadButton == GamepadButton.None ? "Pad: --" : $"P: {_lastCapturedGamepadButton}";
                 PadButton.Background = Brushes.Red;
                 PadCaptureProgress.Visibility = Visibility.Collapsed;
+                int flashMs = ConfigLoader.Instance.Keyboard.DuplicateFlashMs;
                 _ = Task.Run(async () =>
                 {
-                    await Task.Delay(500);
+                    await Task.Delay(flashMs);
                     Dispatcher.Invoke(() => PadButton.Background = _padDefaultBg);
                 });
             }
@@ -242,9 +245,10 @@ namespace CtATracker.UI_element_prefabs
                 {
                     KeyButton.Content = _lastCapturedKey == Key.None ? "Key: --" : $"K: {_lastCapturedKey}";
                     KeyButton.Background = Brushes.Red;
+                    int flashMs = ConfigLoader.Instance.Keyboard.DuplicateFlashMs;
                     _ = Task.Run(async () =>
                     {
-                        await Task.Delay(500);
+                        await Task.Delay(flashMs);
                         Dispatcher.Invoke(() => KeyButton.Background = _defaultBg);
                     });
                 }
@@ -308,7 +312,7 @@ namespace CtATracker.UI_element_prefabs
 
             if (string.IsNullOrEmpty(newText))
             {
-                textBox.Text = "1";
+                textBox.Text = ConfigLoader.Instance.CharacterDefaults.InitialSkillLevel.ToString();
             }
 
             // If it's non-empty and valid, do something:

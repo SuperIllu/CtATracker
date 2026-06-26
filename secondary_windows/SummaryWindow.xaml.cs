@@ -1,4 +1,5 @@
 ﻿using CtATracker.characters;
+using CtATracker.config;
 using CtATracker.Utilities;
 using CtATracker.skills;
 using CtATracker.UI_element_prefabs;
@@ -19,8 +20,6 @@ namespace CtATracker.secondary_windows
     /// </summary>
     public partial class SummaryWindow : Window
     {
-        public const float SkillShrineDuration = 10f;
-
         private class Times
         {
             public float CurrentTime;
@@ -32,7 +31,6 @@ namespace CtATracker.secondary_windows
             }
         }
 
-        public const float TimerResolution = 0.2f;
         private readonly IKeyboardMouseEvents? _keyboardEvents;
 
         private DispatcherTimer _timer;
@@ -50,8 +48,7 @@ namespace CtATracker.secondary_windows
         private Dictionary<SkillHandler.SkillConfig, TimerWindowEntry> _skillUIElements;
         private bool _skillShrineActive;
 
-        // gives you a bonus point
-        private const string BattleCommandsSkillName = "BattleCommand";
+
 
 
         public SummaryWindow(CharacterEntry character, SkillHandler skillHandler, ControlScheme controlScheme)
@@ -198,16 +195,16 @@ namespace CtATracker.secondary_windows
         private int CalculateBonusPoints()
         {
             int bonusPoints = 0;
-            if (_character.MappedSkills.TryGetValue(BattleCommandsSkillName, out SkillHandler.SkillConfig? battleCommandsSkill))
+            if (_character.MappedSkills.TryGetValue(ConfigLoader.Instance.BattleCommand.SkillName, out SkillHandler.SkillConfig? battleCommandsSkill))
             {
                 if (_skillTimes.TryGetValue(battleCommandsSkill, out Times battleCommandsTime) && battleCommandsTime.CurrentTime > 0)
                 {
-                    bonusPoints += 1;
+                    bonusPoints += ConfigLoader.Instance.BattleCommand.BonusPoints;
                 }
             }
             if (_skillShrineActive)
             {
-                bonusPoints += 2;
+                bonusPoints += ConfigLoader.Instance.SkillShrine.BonusPoints;
             }
 
             return bonusPoints;
@@ -230,7 +227,7 @@ namespace CtATracker.secondary_windows
             if (_timer is null)
             {
                 _timer = new DispatcherTimer();
-                _timer.Interval = TimeSpan.FromSeconds(0.2f);
+                _timer.Interval = TimeSpan.FromSeconds(ConfigLoader.Instance.Overlay.TimerResolutionSec);
                 _timer.Tick += Timer_Tick;
                 _timer.Start();
             }
@@ -240,7 +237,7 @@ namespace CtATracker.secondary_windows
         {
             _skillShrineActive = true;
             SkillShrineButton.BorderBrush = Brushes.LimeGreen;
-            await Task.Delay(TimeSpan.FromSeconds(SkillShrineDuration)); 
+            await Task.Delay(TimeSpan.FromSeconds(ConfigLoader.Instance.SkillShrine.DurationSec)); 
             _skillShrineActive = false;
             SkillShrineButton.BorderBrush = Brushes.Transparent; // Reset border
         }
@@ -256,7 +253,7 @@ namespace CtATracker.secondary_windows
             {
                 if (_skillTimes[skill].CurrentTime > 0)
                 {
-                    _skillTimes[skill].CurrentTime -= TimerResolution; // Decrease the time by the timer interval
+                    _skillTimes[skill].CurrentTime -= ConfigLoader.Instance.Overlay.TimerResolutionSec;
                     if (_skillTimes[skill].CurrentTime < 0)
                     {
                         _skillTimes[skill].CurrentTime = 0; // Ensure it doesn't go negative

@@ -1,9 +1,11 @@
 ﻿using CtATracker.characters;
 using CtATracker.characters.serialisers;
+using CtATracker.config;
 using CtATracker.secondary_windows;
 using CtATracker.window_elements;
 using CtATracker.skills;
 using CtATracker.skills.serialisers;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -16,9 +18,6 @@ namespace CtATracker
     /// </summary>
     public partial class MainWindow : Window
     {
-        public const string CharacterFileName = "Characters.yml";
-        public const string SkillFileName = "skills.yml";
-
         private SkillHandler _skillHandler;
         private CharacterHandler _characterHandler;
         private SummaryWindow? _overlayWindow;
@@ -27,10 +26,13 @@ namespace CtATracker
         {
             InitializeComponent();
 
-            _characterHandler = new CharacterHandler(new CharacterFileHandler(CharacterFileName));
+            string baseDir = AppContext.BaseDirectory;
+            ConfigLoader.Load(Path.Combine(baseDir, "Config.yml"));
+
+            _characterHandler = new CharacterHandler(new CharacterFileHandler(Path.Combine(baseDir, "Characters.yml")));
             try
             {
-                _skillHandler = new SkillHandler(new SkillFileHandler(SkillFileName));
+                _skillHandler = new SkillHandler(new SkillFileHandler(Path.Combine(baseDir, "Skills.yml")));
             }
             catch (Exception ex)
             {

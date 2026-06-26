@@ -1,3 +1,4 @@
+using CtATracker.config;
 using System.Runtime.InteropServices;
 
 namespace CtATracker.skills
@@ -22,7 +23,7 @@ namespace CtATracker.skills
         public const ushort XINPUT_GAMEPAD_X = 0x4000;
         public const ushort XINPUT_GAMEPAD_Y = 0x8000;
 
-        public const byte TRIGGER_THRESHOLD = 30;
+        public static byte TRIGGER_THRESHOLD => ConfigLoader.Instance.Gamepad.TriggerThreshold;
 
         [DllImport("xinput1_4.dll")]
         public static extern int XInputGetState(int dwUserIndex, ref XINPUT_STATE pState);

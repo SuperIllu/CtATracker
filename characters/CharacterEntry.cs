@@ -1,4 +1,5 @@
-﻿using CtATracker.skills;
+﻿using CtATracker.config;
+using CtATracker.skills;
 using CtATracker.window_elements;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace CtATracker.characters
 
         public CharacterEntry()
         {
-            Name = "NewCharacter";
+            Name = ConfigLoader.Instance.CharacterDefaults.Name;
             Skills = new List<SkillHandler.SkillConfig>();
         }
 

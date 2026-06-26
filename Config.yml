@@ -1,0 +1,31 @@
+gamepad:
+  pollIntervalMs: 16
+  captureTimeoutSec: 3
+  triggerThreshold: 30
+
+keyboard:
+  duplicateFlashMs: 500
+
+overlay:
+  timerResolutionSec: 0.2
+
+characterDefaults:
+  name: NewCharacter
+  initialSkillLevel: 1
+
+battleCommand:
+  skillName: BattleCommand
+  bonusPoints: 1
+
+skillShrine:
+  iconPath: /img/SkillShrine.png
+  durationSec: 10
+  bonusPoints: 2
+
+timerColors:
+  - "#FF6C8EBF"
+  - "#FFB19C63"
+  - "#FF7FBF7F"
+  - "#FFBF7F7F"
+  - "#FFA89CBF"
+  - "#FF7FBFBF"

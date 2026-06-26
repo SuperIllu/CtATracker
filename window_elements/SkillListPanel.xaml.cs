@@ -1,4 +1,5 @@
 ﻿using CtATracker.characters;
+using CtATracker.config;
 using CtATracker.skills;
 using CtATracker.UI_element_prefabs;
 using System;
@@ -105,7 +106,7 @@ namespace CtATracker.window_elements
             {
                 return;
             }
-            currentChar.AddSkill(new SkillConfig() { Name = skillName, HardPoints = 0, TotalPoints = 1, HotKey = Key.None });
+            currentChar.AddSkill(new SkillConfig() { Name = skillName, HardPoints = 0, TotalPoints = ConfigLoader.Instance.CharacterDefaults.InitialSkillLevel, HotKey = Key.None });
             _characterHandler.SkillsUpdated();
 
             //update ui after adding the skill
