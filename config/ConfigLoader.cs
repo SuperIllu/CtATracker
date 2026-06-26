@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -36,21 +37,35 @@ namespace CtATracker.config
         public static ConfigLoader Load(string filePath)
         {
             if (!File.Exists(filePath))
-            {
-                var serializer = new SerializerBuilder()
-                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                    .Build();
-                string defaultYaml = serializer.Serialize(new ConfigLoader());
-                File.WriteAllText(filePath, defaultYaml);
-            }
+                CreateDefaultConfigFile(filePath);
 
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
 
-            string yaml = File.ReadAllText(filePath);
-            _instance = deserializer.Deserialize<ConfigLoader>(yaml);
-            return _instance;
+            try
+            {
+                string yaml = File.ReadAllText(filePath);
+                _instance = deserializer.Deserialize<ConfigLoader>(yaml);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Config.yml parse error: {ex.Message}");
+                File.Copy(filePath, filePath + ".bak", overwrite: true);
+                CreateDefaultConfigFile(filePath);
+                _instance = new ConfigLoader();
+            }
+
+            return _instance!;
+        }
+
+        private static void CreateDefaultConfigFile(string filePath)
+        {
+            var serializer = new SerializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build();
+            string defaultYaml = serializer.Serialize(new ConfigLoader());
+            File.WriteAllText(filePath, defaultYaml);
         }
 
         public class GamepadSection
