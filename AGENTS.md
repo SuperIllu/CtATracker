@@ -41,16 +41,7 @@ Note: if you are executing in the WSL environment, use `dotnet.exe` instead of `
 
 Consult these tickets before making unrelated changes — many touch the same files:
 
-| Ticket | File(s) | Issue |
-|---|---|---|
-| T-001 | `Skills.yml` | Typos: CillingArmor/ChillingAmor → ChillingArmor |
-| T-002 | `FileHandler.cs`, `SkillHandler.cs`, `SummaryWindow.xaml` | Dead code / duplicate methods / unused XAML elements |
-| T-003 | `SummaryWindow.xaml.cs` | Global keyboard hook leaked — `Closed` event never subscribed |
-| T-004 | `SkillHandler.cs`, `SummaryWindow.xaml.cs` | `GetSkill` returns `default` → NRE on missing skill |
-| T-005 | `CharacterEntry.cs` | `RemoveSynergySkill` — `FirstOrDefault` can return null |
-| T-006 | `CharacterHandler.cs` | `AddNewCharacter` doesn't auto-save |
-| T-007 | `MainWindow.xaml.cs` | Missing `Skills.yml` crashes at startup ungracefully |
-| T-008 | `SummaryWindow.xaml.cs` | Duplicate hotkeys silently overwrite each other |
+- currently no bugs known
 
 ## Gotchas
 
@@ -63,7 +54,7 @@ Consult these tickets before making unrelated changes — many touch the same fi
 
 ## Workflow & Git Guardrails
 - **Branch Protection:** Under no circumstances are you allowed to commit or push directly to the `master` or `main` branches. 
-- **Feature Branches:** Before making any code modifications, check the current git branch. If you are on `master` or `main`, you must use the bash tool to create and switch to a new feature branch prefixed with `agent/` (e.g., `agent/fix-wpf-binding`).
+- **Feature Branches:** Before making any code modifications, check the current git branch. If you are on `master` or `main`, you must use the bash tool to create and switch to a new feature branch prefixed with `agent/` (e.g., `agent/fix-wpf-binding`). You one branch per feature, not individual ones for phases in a feature.
 - **Atomic Commits:** Make small, logical commits as you complete sub-tasks rather than one massive commit at the end.
 
 - **No Unauthorized Dependencies:** You are strictly forbidden from modifying the `.csproj` file to add new NuGet packages unless explicitly requested by the human. Use native .NET framework features or existing project libraries only.

@@ -11,7 +11,15 @@
                  TextChanged="NumberOnlyTextBox_TextChanged"
                  />
         <Button x:Name="KeyButton" Content="Key: --" Width="70" Margin="5 0 5 0" Click="CaptureHotKey_Click"/>
-        <Button x:Name="PadButton" Content="Pad: --" Width="70" Margin="5 0 5 0" Click="CaptureGamepad_Click" Visibility="Collapsed"/>
+        <Button x:Name="PadButton" Width="70" Margin="5 0 5 0" Click="CaptureGamepad_Click" Visibility="Collapsed">
+            <Grid>
+                <ProgressBar x:Name="PadCaptureProgress" Minimum="0" Maximum="100" Value="100"
+                             Foreground="#FFCC44" Background="Transparent" BorderThickness="0"
+                             Visibility="Collapsed" IsHitTestVisible="False"/>
+                <TextBlock x:Name="PadButtonText" Text="Pad: --" HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+            </Grid>
+        </Button>
         <Button x:Name="DeleteButton" Content="-" Width="25" ToolTip="Delete skill" Click="RemoveSkill_Click"/>
     </StackPanel>
 </UserControl>

@@ -20,6 +20,8 @@ namespace CtATracker.UI_element_prefabs
         private Key _lastCapturedKey;
         private GamepadButton _lastCapturedGamepadButton;
         private readonly Brush _defaultBg;
+        private readonly Brush _padDefaultBg;
+        private DateTime _captureStartTime;
 
         private DispatcherTimer? _gamepadPollTimer;
         private DispatcherTimer? _gamepadTimeoutTimer;
@@ -36,6 +38,7 @@ namespace CtATracker.UI_element_prefabs
         {
             InitializeComponent();
             _defaultBg = KeyButton.Background;
+            _padDefaultBg = PadButton.Background;
         }
 
         public void LinkSkillRemovalCallback(Action<string> callback)
@@ -114,8 +117,11 @@ namespace CtATracker.UI_element_prefabs
 
             _onStartListening?.Invoke();
             _listeningButton = this;
-            PadButton.Content = "Press button";
-            PadButton.Background = Brushes.Yellow;
+            PadButtonText.Text = "Press button";
+            PadButton.Background = _padDefaultBg;
+            PadCaptureProgress.Visibility = Visibility.Visible;
+            PadCaptureProgress.Value = 100;
+            _captureStartTime = DateTime.UtcNow;
             DeleteButton.IsEnabled = false;
             _previousCaptureState = new XINPUT_STATE();
 
@@ -140,13 +146,17 @@ namespace CtATracker.UI_element_prefabs
             _listeningButton = null;
             DeleteButton.IsEnabled = true;
 
-            PadButton.Content = _lastCapturedGamepadButton == GamepadButton.None ? "Pad: --" : $"P: {_lastCapturedGamepadButton}";
-            PadButton.Background = Brushes.LightGray;
+            PadButtonText.Text = _lastCapturedGamepadButton == GamepadButton.None ? "Pad: --" : $"P: {_lastCapturedGamepadButton}";
+            PadButton.Background = _padDefaultBg;
+            PadCaptureProgress.Visibility = Visibility.Collapsed;
             _onStopListening?.Invoke();
         }
 
         private void GamepadPollTimer_Tick(object? sender, EventArgs e)
         {
+            double elapsed = (DateTime.UtcNow - _captureStartTime).TotalMilliseconds;
+            PadCaptureProgress.Value = Math.Max(0, 100 * (1 - elapsed / 3000));
+
             XINPUT_STATE state = new XINPUT_STATE();
             int result = XInput.XInputGetState(0, ref state);
             if (result != XInput.ERROR_SUCCESS) return;
@@ -166,20 +176,22 @@ namespace CtATracker.UI_element_prefabs
 
             if (isDuplicate)
             {
-                PadButton.Content = _lastCapturedGamepadButton == GamepadButton.None ? "Pad: --" : $"P: {_lastCapturedGamepadButton}";
+                PadButtonText.Text = _lastCapturedGamepadButton == GamepadButton.None ? "Pad: --" : $"P: {_lastCapturedGamepadButton}";
                 PadButton.Background = Brushes.Red;
+                PadCaptureProgress.Visibility = Visibility.Collapsed;
                 _ = Task.Run(async () =>
                 {
                     await Task.Delay(500);
-                    Dispatcher.Invoke(() => PadButton.Background = _defaultBg);
+                    Dispatcher.Invoke(() => PadButton.Background = _padDefaultBg);
                 });
             }
             else
             {
-                PadButton.Content = $"P: {pressed.Value}";
+                PadButtonText.Text = $"P: {pressed.Value}";
                 _lastCapturedGamepadButton = pressed.Value;
                 OnGamepadButtonSelected?.Invoke(SkillName, pressed.Value);
-                PadButton.Background = Brushes.LightGray;
+                PadButton.Background = _padDefaultBg;
+                PadCaptureProgress.Visibility = Visibility.Collapsed;
                 Debug.WriteLine($"Gamepad button captured: {pressed.Value}");
             }
 
@@ -320,7 +332,7 @@ namespace CtATracker.UI_element_prefabs
 
         internal void SetGamepadButton(GamepadButton button)
         {
-            PadButton.Content = button == GamepadButton.None ? "Pad: --" : $"P: {button}";
+            PadButtonText.Text = button == GamepadButton.None ? "Pad: --" : $"P: {button}";
             _lastCapturedGamepadButton = button;
         }
 
