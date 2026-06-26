@@ -24,12 +24,16 @@ Note: if you are executing in the WSL environment, use `dotnet.exe` instead of `
 
 - **`CtATracker/`** — WPF app (WinExe). Entrypoint `App.xaml` → `MainWindow.xaml`.
 - **`CtATracker.Tests/`** — MSTest tests. Mock file handlers live alongside tests.
+- **`config/ConfigLoader.cs`** — typed YAML config loader (static singleton, auto-creates defaults).
+- **`secondary_windows/SkillTimerManager.cs`** — timer state, countdown logic, skill time calculations (extracted from SummaryWindow).
+- **`UI element prefabs/NumericTextBoxBehavior.cs`** — shared numeric input validation helper (extracted from SkillEntryControl/SynergySkill).
 - No MVVM; UI built imperatively (direct `Children.Add`, no data binding).
 
 ## Runtime Config
 
 - **`Skills.yml`** — skill definitions with NCalc duration formulas. Copied to output dir. Uses `{level}` and `{SynergyName}` placeholders.
-- **`Characters.yml`** — auto-created character data (name, skill levels, hard points, hotkeys).
+- **`Characters.yml`** — auto-created character data (name, skill levels, hard points, hotkeys, gamepad button, control scheme).
+- **`Config.yml`** — auto-created runtime config (gamepad poll rate/timeout/threshold, keyboard flash duration, overlay timer resolution, character defaults, battle command/skill shrine bonuses, timer colors). Backed up to `.bak` if malformed.
 
 ## Test Quirks
 
@@ -50,6 +54,9 @@ Consult these tickets before making unrelated changes — many touch the same fi
 - `SkillEntryControl` uses static fields (`_listeningButton`) — only one instance can capture a key at a time.
 - Overlay window has hardcoded demo XAML timer entries that are never used (dynamically replaced).
 - Character `Name` is also the dictionary key — renaming not supported without delete+recreate.
+- `ConfigLoader` is a static singleton; `Instance` returns a default-config instance if `Load()` was never called (safe for tests).
+- `SkillTimerManager` owns `_skillTimes` and all countdown/calculation logic. SummaryWindow delegates to it via `TriggerSkill()` and `DecrementTimers()`.
+- `NumericTextBoxBehavior` methods are static — used by both `SkillEntryControl` and `SynergySkill` for input validation.
 
 
 ## Workflow & Git Guardrails
